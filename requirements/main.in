@@ -15,4 +15,4 @@ uvicorn[standard]
 # Other dependencies.
 pydantic
 pydantic-settings
-safir>=5
+safir[db]>=5
