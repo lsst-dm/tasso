@@ -1,19 +1,21 @@
 """All database schema objects."""
 
 from .base import Base
+from .classification import Classification
 from .classification_run import ClassificationRun
+from .flag import Flag
 from .label import Label
-from .label_classes import LabelClasses
-from .run_classes import RunClasses
+from .run_label import RunLabel
 from .subject import Subject
 from .user import User
 
 __all__ = [
     "Base",
-    "Label",
-    "LabelClasses",
-    "Subject",
+    "Classification",
     "ClassificationRun",
-    "RunClasses",
+    "Flag",
+    "Label",
+    "Subject",
+    "RunLabel",
     "User",
 ]
