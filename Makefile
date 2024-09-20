@@ -17,8 +17,19 @@ init:
 	uv pip install --upgrade pre-commit
 	pre-commit install
 
+
+.PHONY: run-compose
+run-compose:
+	docker compose up --wait
+
 .PHONY: run
-run:
+run: TASSO_DATABASE_PORT=$(shell docker compose port postgresql 5432 | cut -d: -f2)
+run: export TASSO_DATABASE_URL=postgresql://tasso@localhost:${TASSO_DATABASE_PORT}/tasso
+run: export TASSO_DATABASE_PASSWORD=INSECURE-PASSWORD
+run: export TASSO_DATABASE_ECHO=true
+run: run-compose
+#	cm-service init
+#	cm-service run
 	tox run -e run
 
 .PHONY: update
