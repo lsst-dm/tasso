@@ -1,0 +1,22 @@
+# Run PostgreSQL for testing with a local development server.
+# This is used by make run, which starts tasso in the foreground.
+
+name: "${USER}-tasso"
+services:
+  postgresql:
+    image: "postgres:latest"
+    hostname: "postgresql"
+    environment:
+      POSTGRES_PASSWORD: "INSECURE-PASSWORD"
+      POSTGRES_USER: "tasso"
+      POSTGRES_DB: "tasso"
+    ports:
+      - "5432"
+    healthcheck:
+      test: >-
+        psql postgresql://tasso:INSECURE-PASSWORD@127.0.0.1/tasso
+        --quiet --no-align --tuples-only -1 --command="SELECT 1"
+      interval: 1s
+      timeout: 1s
+      retries: 30
+      start_period: 1s
