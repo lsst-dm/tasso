@@ -14,7 +14,7 @@ class ClassificationRun(Base):
 
     __tablename__ = "classification_run"
 
-    run_id: Mapped[int] = mapped_column(primary_column=True)
+    run_id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str]
     comment: Mapped[str | None]
     repo: Mapped[str | None]
