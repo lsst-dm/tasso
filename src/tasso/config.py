@@ -24,28 +24,33 @@ class Config(BaseSettings):
         LogLevel.INFO, title="Log level of the application's logger"
     )
 
+    logger_name: str = Field("tasso")
+
     # see https://safir.lsst.io/user-guide/database/initialize.html#using-non-default-postgresql-schemas
     database_schema: str | None = Field(
-        default=None,
+        default="tasso",
         description=(
             "Postgres schema name (namespace) to store classifications."
         ),
-        validation_alias="TASSO_DATABASE_SCHEMA",
     )
 
     database_url: str = Field(
         default="",
-        title="The URL for the cm-service database",
-        validation_alias="TASSO_DATABASE_URL",
+        title="The URL for the tasso database",
+    )
+
+    database_user: str = Field(
+        default="tasso",
+        title="The username for the tasso database",
     )
 
     database_password: SecretStr | str | None = Field(
-        title="The password for the cm-service database",
-        validation_alias="TASSO_DATABASE_PASSWORD",
+        default=None,
+        title="The password for the tasso database",
     )
 
     slack_webhook_url: HttpUrl | None = Field(
-        None,
+        default=None,
         description=(
             "Webhook URL for sending error messages to a Slack channel."
         ),
