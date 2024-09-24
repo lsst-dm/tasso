@@ -32,7 +32,7 @@ def help(ctx: click.Context, topic: str | None, subtopic: str | None) -> None:
     "--reset", is_flag=True, help="Delete all existing database data."
 )
 @run_with_asyncio
-async def init(*, reset: bool) -> None:
+async def init(*, reset: bool) -> None:  # pragma: no cover
     """Initialize the database if needed."""
     logger = structlog.get_logger(config.logger_name)
     engine = create_database_engine(

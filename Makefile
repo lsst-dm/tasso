@@ -28,8 +28,8 @@ run: export TASSO_DATABASE_URL=postgresql://tasso@localhost:${TASSO_DATABASE_POR
 run: export TASSO_DATABASE_PASSWORD=INSECURE-PASSWORD
 run: export TASSO_DATABASE_ECHO=true
 run: run-compose
-#	cm-service init
-#	cm-service run
+	tasso init
+	#tasso run
 	tox run -e run
 
 .PHONY: update
