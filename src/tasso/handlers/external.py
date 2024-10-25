@@ -8,7 +8,7 @@ from safir.metadata import get_metadata
 from structlog.stdlib import BoundLogger
 
 from ..config import config
-from ..models import Index
+from ..models.index import Index
 
 __all__ = ["get_index", "external_router"]
 

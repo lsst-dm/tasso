@@ -1,4 +1,4 @@
-"""Models for tasso."""
+"""Index model for tasso."""
 
 from pydantic import BaseModel, Field
 from safir.metadata import Metadata as SafirMetadata
