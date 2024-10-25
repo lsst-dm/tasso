@@ -12,5 +12,6 @@ class Flag(Base):
 
     __tablename__ = "flag"
 
-    flag_bit: Mapped[int] = mapped_column(primary_key=True)
+    flag_id: Mapped[int] = mapped_column(primary_key=True)
+    flag_bit: Mapped[int]
     name: Mapped[str]

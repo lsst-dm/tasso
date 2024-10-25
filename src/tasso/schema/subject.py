@@ -13,7 +13,8 @@ class Subject(Base):
 
     __tablename__ = "subject"
 
-    dia_source_id: Mapped[int] = mapped_column(primary_key=True)
+    subject_id: Mapped[int] = mapped_column(primary_key=True)
+    dia_source_id: Mapped[int]
     uri: Mapped[str]
     run_id: Mapped[int] = mapped_column(
         ForeignKey("classification_run.run_id")
