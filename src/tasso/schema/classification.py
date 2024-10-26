@@ -21,9 +21,7 @@ class Classification(Base):
     classification_id: Mapped[int] = mapped_column(primary_key=True)
     user_id: Mapped[int] = mapped_column(ForeignKey("user.user_id"))
     label_id: Mapped[int] = mapped_column(ForeignKey("label.label_id"))
-    dia_source_id: Mapped[int] = mapped_column(
-        ForeignKey("subject.dia_source_id")
-    )
+    subject: Mapped[int] = mapped_column(ForeignKey("subject.subject_id"))
     run_id: Mapped[int] = mapped_column(
         ForeignKey("classification_run.run_id")
     )
