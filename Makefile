@@ -24,13 +24,15 @@ run-compose:
 
 .PHONY: run
 run: TASSO_DATABASE_PORT=$(shell docker compose port postgresql 5432 | cut -d: -f2)
-run: export TASSO_DATABASE_URL=postgresql://tasso@localhost:${TASSO_DATABASE_PORT}/tasso
+run: export TASSO_DATABASE_USER=tasso
+run: export TASSO_DATABASE_SCHEMA=test
+run: export TASSO_DATABASE_URL=postgresql://${TASSO_DATABASE_USER}@localhost:${TASSO_DATABASE_PORT}/tasso
 run: export TASSO_DATABASE_PASSWORD=INSECURE-PASSWORD
 run: export TASSO_DATABASE_ECHO=true
 run: run-compose
 	tasso init
-	#tasso run
-	tox run -e run
+	tasso run
+	#tox run -e run
 
 .PHONY: update
 update: update-deps init
