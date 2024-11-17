@@ -36,7 +36,6 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     """Set up and tear down the application."""
     # Any code here will be run when the application starts up.
     logger = get_logger(__name__)
-    print(config)
     await db_session_dependency.initialize(
         config.database_url, config.database_password
     )

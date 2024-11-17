@@ -2,6 +2,7 @@
 
 from datetime import datetime
 
+from sqlalchemy import String
 from sqlalchemy.orm import Mapped, mapped_column
 
 from .base import Base
@@ -14,7 +15,7 @@ class ClassificationRun(Base):
 
     __tablename__ = "classification_run"
 
-    run_id: Mapped[int] = mapped_column(primary_key=True)
+    run_id: Mapped[str] = mapped_column(String(32), primary_key=True)
     name: Mapped[str]
     comment: Mapped[str | None]
     repo: Mapped[str | None]
