@@ -3,7 +3,7 @@
 from datetime import datetime
 
 from sqlalchemy import String
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from .base import Base
 
@@ -24,3 +24,5 @@ class ClassificationRun(Base):
     ticket: Mapped[str | None]
     time_start: Mapped[datetime | None]
     time_stop: Mapped[datetime | None]
+
+    subjects: Mapped[list["Subject"]] = relationship()  # noqa: F821
