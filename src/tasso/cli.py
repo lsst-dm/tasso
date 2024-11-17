@@ -5,11 +5,8 @@ import structlog
 import uvicorn
 from safir.asyncio import run_with_asyncio
 from safir.click import display_help
-from safir.database import (
-    create_async_session,
-    create_database_engine,
-    initialize_database,
-)
+from safir.database import create_database_engine, initialize_database
+from safir.dependencies.db_session import db_session_dependency
 
 from .config import config
 from .models.user import User
@@ -66,24 +63,26 @@ def run() -> None:
 @run_with_asyncio
 async def add_user(username: str) -> None:
     """Add a user."""
-    u = User(username=username)
-    engine = create_database_engine(
+    await db_session_dependency.initialize(
         config.database_url, config.database_password
     )
-    session = await create_async_session(engine)
-    store = UserStore(session)
+
+    u = User(username=username)
+    async for db_session in db_session_dependency():
+        store = UserStore(db_session)
     await store.add(u)
-    await engine.dispose()
+    await db_session_dependency.aclose()
 
 
 @main.command()
 @run_with_asyncio
 async def list_users() -> None:
     """Get users."""
-    engine = create_database_engine(
+    await db_session_dependency.initialize(
         config.database_url, config.database_password
     )
-    session = await create_async_session(engine)
-    store = UserStore(session)
-    await store.list()
-    await engine.dispose()
+
+    async for db_session in db_session_dependency():
+        store = UserStore(db_session)
+        print(await store.list())
+    await db_session_dependency.aclose()

@@ -44,7 +44,8 @@ class Config(BaseSettings):
         title="The username for the tasso database",
     )
 
-    database_password: SecretStr | str | None = Field(
+    # TODO: put SecretStr first.  right now plaintext is easier for debugging
+    database_password: str | SecretStr | None = Field(
         default=None,
         title="The password for the tasso database",
     )

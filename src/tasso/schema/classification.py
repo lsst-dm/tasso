@@ -6,9 +6,6 @@ from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from .base import Base
-from .label import Label
-from .run_label import RunLabel
-from .subject import Subject
 
 __all__ = ["Classification"]
 
@@ -20,16 +17,14 @@ class Classification(Base):
 
     classification_id: Mapped[int] = mapped_column(primary_key=True)
     user_id: Mapped[int] = mapped_column(ForeignKey("user.user_id"))
-    label_id: Mapped[int] = mapped_column(ForeignKey("label.label_id"))
-    subject: Mapped[int] = mapped_column(ForeignKey("subject.subject_id"))
+    subject_id: Mapped[int] = mapped_column(ForeignKey("subject.subject_id"))
     run_id: Mapped[int] = mapped_column(
         ForeignKey("classification_run.run_id")
     )
+    label_id: Mapped[int]
+    label_text: Mapped[str]
     comment: Mapped[str | None]
     flags: Mapped[int | None]
     time_labeled: Mapped[datetime]
 
-    subjects: Mapped[list["Subject"]] = relationship()
-    labels: Mapped[list["Label"]] = relationship(
-        secondary=RunLabel, back_populates="runs"
-    )
+    subjects: Mapped[list["Subject"]] = relationship()  # noqa: F821

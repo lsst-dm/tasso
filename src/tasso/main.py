@@ -12,6 +12,7 @@ from contextlib import asynccontextmanager
 from importlib.metadata import metadata, version
 
 from fastapi import FastAPI
+from safir.dependencies.db_session import db_session_dependency
 from safir.dependencies.http_client import http_client_dependency
 from safir.fastapi import ClientRequestError, client_request_error_handler
 from safir.logging import configure_logging, configure_uvicorn_logging
@@ -35,10 +36,15 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     """Set up and tear down the application."""
     # Any code here will be run when the application starts up.
     logger = get_logger(__name__)
+    print(config)
+    await db_session_dependency.initialize(
+        config.database_url, config.database_password
+    )
 
     yield
 
     # Any code here will be run when the application shuts down.
+    await db_session_dependency.aclose()
     await http_client_dependency.aclose()
 
     logger.info("tasso application shut down complete.")
