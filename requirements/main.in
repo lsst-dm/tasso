@@ -16,3 +16,4 @@ uvicorn[standard]
 pydantic
 pydantic-settings
 safir[db]>=5
+lsst-resources
