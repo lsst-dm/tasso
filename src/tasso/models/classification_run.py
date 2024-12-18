@@ -38,7 +38,7 @@ class ClassificationRun(BaseModel):
         default=None,
     )
 
-    collectioon: str = Field(
+    collection: str = Field(
         title="collection",
         description="Collection for subjects in this run.",
         default=None,
@@ -56,14 +56,22 @@ class ClassificationRun(BaseModel):
         default=None,
     )
 
-    time_start: datetime = Field(
+    time_start: datetime | None = Field(
         title="time_start",
         description="Time run began.",
+        default=None,
     )
 
-    time_stop: datetime = Field(
+    time_stop: datetime | None = Field(
         title="time_stop",
         description="Time run ended.",
+        default=None,
+    )
+
+    max_classifications: int = Field(
+        title="max_classifications",
+        description="Number of classifications needed per subject.",
+        default=1,
     )
 
     model_config = ConfigDict(from_attributes=True)

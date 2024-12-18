@@ -24,5 +24,6 @@ class ClassificationRun(Base):
     ticket: Mapped[str | None]
     time_start: Mapped[datetime | None]
     time_stop: Mapped[datetime | None]
+    max_classifications: Mapped[int]
 
     subjects: Mapped[list["Subject"]] = relationship()  # noqa: F821
