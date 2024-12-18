@@ -23,6 +23,7 @@ from structlog import get_logger
 from .config import config
 from .handlers.external import external_router
 from .handlers.internal import internal_router
+from .webapp import webapp
 
 __all__ = ["app"]
 
@@ -86,3 +87,6 @@ if config.slack_webhook_url:
 
 # Add exception handler for Safir's ClientRequestError.
 app.exception_handler(ClientRequestError)(client_request_error_handler)
+
+# Start the frontend web application.
+app.mount("/webapp", webapp)
