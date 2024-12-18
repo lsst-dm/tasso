@@ -9,11 +9,15 @@ from safir.database import create_database_engine, initialize_database
 from safir.dependencies.db_session import db_session_dependency
 
 from .config import config
+from .models.classification_run import ClassificationRun
+from .models.subject import Subject
 from .models.user import User
 from .schema import Base
+from .storage.classification_run import ClassificationRunStore
+from .storage.subject import SubjectStore
 from .storage.user import UserStore
 
-__all__ = ["main", "help", "init", "add_user"]
+__all__ = ["add_user", "help", "init", "main"]
 
 
 @click.group(context_settings={"help_option_names": ["-h", "--help"]})
@@ -56,6 +60,54 @@ def run() -> None:
         reload=True,
         reload_dirs=["src"],
     )
+
+
+@main.command()
+@click.argument("name")
+@run_with_asyncio
+async def add_run(name: str) -> None:
+    """Add a classification run."""
+    await db_session_dependency.initialize(
+        config.database_url, config.database_password
+    )
+
+    r = ClassificationRun(name=name)
+    async for db_session in db_session_dependency():
+        store = ClassificationRunStore(db_session)
+    await store.add(r)
+    await db_session_dependency.aclose()
+
+
+@main.command()
+@run_with_asyncio
+async def list_runs() -> None:
+    """Get runs."""
+    await db_session_dependency.initialize(
+        config.database_url, config.database_password
+    )
+
+    async for db_session in db_session_dependency():
+        store = ClassificationRunStore(db_session)
+        print(await store.list())
+    await db_session_dependency.aclose()
+
+
+@main.command()
+@click.argument("run_id")
+@click.argument("dia_source_id")
+@click.argument("uri")
+@run_with_asyncio
+async def add_subject(run_id: str, dia_source_id: int, uri: str) -> None:
+    """Add a subject."""
+    await db_session_dependency.initialize(
+        config.database_url, config.database_password
+    )
+
+    s = Subject(run_id=run_id, dia_source_id=dia_source_id, uri=uri)
+    async for db_session in db_session_dependency():
+        store = SubjectStore(db_session)
+    await store.add(s)
+    await db_session_dependency.aclose()
 
 
 @main.command()
