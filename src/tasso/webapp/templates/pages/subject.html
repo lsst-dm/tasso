@@ -1,0 +1,18 @@
+{% extends "pages/base.html" %}
+{% block title %} subjects {% endblock %}
+{% block content %}
+    <div id="subjects_content">
+	    <div class="flex pl-3 items-center">
+		<span class="text-large">{{subject.subject_id}}</span>
+		&nbsp;
+		<span class="text-large">{{subject.dia_source_id}}</span>
+		&nbsp;
+		<span class="text-large">{{subject.uri}}</span>
+		&nbsp;
+		<span class="text-large">{{subject.run_id}}</span>
+	    </div>
+	    <div class="flex pl-3 items-center">
+		<img src="data:image/png;base64,{{ image | safe }}">
+	    </div>
+    </div>
+{% endblock %}
