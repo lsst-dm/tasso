@@ -86,3 +86,44 @@ class BaseStore:
         async with self._session.begin():
             result = await self._session.scalars(stmt)
             return [self.model.model_validate(a) for a in result.all()]
+
+    async def get(self, value: str) -> ClassVar:
+        """Get a model record by primary key.
+
+        Returns
+        -------
+        model
+        """
+        stmt = select(self.storage).where(
+            getattr(self.storage, self.primary_key) == value
+        )
+        async with self._session.begin():
+            result = await self._session.execute(stmt)
+            value = result.one_or_none()
+            print(value)
+            if value is None:
+                return None
+            else:
+                return self.model.model_validate(value[0])
+
+    async def search(self, key: str, value: str) -> ClassVar:
+        """Get a model record by primary key.
+
+        Parameters
+        ----------
+        key
+            The column name to search on
+        value
+            The value to search for
+
+        Returns
+        -------
+        model
+        """
+        stmt = select(self.storage).where(getattr(self.storage, key) == value)
+        async with self._session.begin():
+            result = await self._session.execute(stmt)
+        print(list(result))
+        out = [self.model.model_validate(a) for a in result.all()]
+        print(out)
+        return out

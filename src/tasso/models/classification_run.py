@@ -38,13 +38,13 @@ class ClassificationRun(BaseModel):
         default=None,
     )
 
-    collection: str = Field(
+    collection: str | None = Field(
         title="collection",
         description="Collection for subjects in this run.",
         default=None,
     )
 
-    namespace: str = Field(
+    namespace: str | None = Field(
         title="namespace",
         description="APDB namespace for subjects in this run.",
         default=None,
