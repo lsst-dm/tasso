@@ -11,7 +11,11 @@ from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 from importlib.metadata import metadata, version
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request, status
+from fastapi.encoders import jsonable_encoder
+from fastapi.exceptions import RequestValidationError
+from fastapi.responses import JSONResponse
+from pydantic import ValidationError
 from safir.dependencies.db_session import db_session_dependency
 from safir.dependencies.http_client import http_client_dependency
 from safir.fastapi import ClientRequestError, client_request_error_handler
@@ -87,6 +91,24 @@ if config.slack_webhook_url:
 
 # Add exception handler for Safir's ClientRequestError.
 app.exception_handler(ClientRequestError)(client_request_error_handler)
+
+
+# Add handlers for pydantic validation errors.
+# the print gives me something but the response gets eaten?
+# figure out where the logs go and put them there...
+@app.exception_handler(RequestValidationError)
+@app.exception_handler(ValidationError)
+async def validation_exception_handler(
+    request: Request, exc: RequestValidationError | ValidationError
+) -> JSONResponse:
+    body = await request.body()
+    print(f"Request body: {body}")
+    print(exc)
+    return JSONResponse(
+        status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+        content=jsonable_encoder({"detail": exc.errors(), "body": exc.body}),
+    )
+
 
 # Start the frontend web application.
 app.mount("/webapp", webapp)

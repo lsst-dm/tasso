@@ -8,9 +8,10 @@ from safir.metadata import get_metadata
 from structlog.stdlib import BoundLogger
 
 from ..config import config
+from ..models.classification import Classification
 from ..models.index import Index
 
-__all__ = ["get_index", "external_router"]
+__all__ = ["external_router", "get_index"]
 
 external_router = APIRouter()
 """FastAPI router for all external handlers."""
@@ -22,7 +23,6 @@ external_router = APIRouter()
         "Document the top-level API here. By default it only returns metadata"
         " about the application."
     ),
-    response_model=Index,
     response_model_exclude_none=True,
     summary="Application metadata",
 )
@@ -50,3 +50,10 @@ async def get_index(
         application_name=config.name,
     )
     return Index(metadata=metadata)
+
+
+@external_router.put(
+    "/classify", summary="Store classification for a given subject."
+)
+async def put_classification(classification: Classification) -> Classification:
+    return classification

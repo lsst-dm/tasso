@@ -1,18 +1,47 @@
 {% extends "pages/base.html" %}
-{% block title %} subjects {% endblock %}
+{% block title %} subject {% endblock %}
 {% block content %}
-    <div id="subjects_content">
+    <div id="subject_content">
 	    <div class="flex pl-3 items-center">
-		<span class="text-large">{{subject.subject_id}}</span>
+		<span class="text-large" name="subject_id">{{subject.subject_id}}</span>
 		&nbsp;
-		<span class="text-large">{{subject.dia_source_id}}</span>
+		<span class="text-large" name="dia_source_id">{{subject.dia_source_id}}</span>
 		&nbsp;
 		<span class="text-large">{{subject.uri}}</span>
 		&nbsp;
-		<span class="text-large">{{subject.run_id}}</span>
+		<span class="text-large" name="run_id">{{subject.run_id}}</span>
 	    </div>
 	    <div class="flex pl-3 items-center">
 		<img src="data:image/png;base64,{{ image | safe }}">
 	    </div>
+
+	    <div class="flex pl-3 items-center">
+	    <button class="flex items-center px-4 py-3 border" hx-put="/tasso/classify"
+	            hx-vals='js:{"user_id":"6c9709f66ca5464fb3090e5b9a7fab8c",
+			      "subject_id":"{{subject.subject_id}}",
+			      "run_id":"{{subject.run_id}}",
+			      "label_id":1, "label_text":"real",
+			      "comment":"",
+			      "flags":0,
+			      "time_labeled":Date.now()}'
+		    hx-ext="json-enc">
+		    Real
+	    </button>
+	    </div>
+
+	    <div class="flex pl-3 items-center">
+	    <button class="flex items-center px-4 py-3 border" hx-put="/tasso/classify"
+	            hx-vals='js:{"user_id":"6c9709f66ca5464fb3090e5b9a7fab8c",
+			      "subject_id":"{{subject.subject_id}}",
+			      "run_id":"{{subject.run_id}}",
+			      "label_id":0, "label_text":"bogus",
+			      "comment":"",
+			      "flags":0,
+			      "time_labeled":Date.now()}'
+		    hx-ext="json-enc">
+		    Bogus
+	    </button>
+	    </div>
+
     </div>
 {% endblock %}
