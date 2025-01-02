@@ -106,8 +106,8 @@ class BaseStore:
             else:
                 return self.model.model_validate(value[0])
 
-    async def search(self, key: str, value: str) -> ClassVar:
-        """Get a model record by primary key.
+    async def search(self, key_value: dict[str, str]) -> ClassVar:
+        """Get model records matching key-value pairs.
 
         Parameters
         ----------
@@ -120,10 +120,16 @@ class BaseStore:
         -------
         model
         """
-        stmt = select(self.storage).where(getattr(self.storage, key) == value)
+        print(key_value)
+        stmt = select(self.storage).where(
+            *[
+                getattr(self.storage, key) == value
+                for (key, value) in key_value.items()
+            ]
+        )
+        print(stmt)
         async with self._session.begin():
             result = await self._session.execute(stmt)
-        print(list(result))
-        out = [self.model.model_validate(a) for a in result.all()]
+        out = [self.model.model_validate(res[0]) for res in result.all()]
         print(out)
         return out
