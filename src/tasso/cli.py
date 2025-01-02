@@ -13,6 +13,7 @@ from .models.classification_run import ClassificationRun
 from .models.subject import Subject
 from .models.user import User
 from .schema import Base
+from .storage.classification import ClassificationStore
 from .storage.classification_run import ClassificationRunStore
 from .storage.subject import SubjectStore
 from .storage.user import UserStore
@@ -136,5 +137,19 @@ async def list_users() -> None:
 
     async for db_session in db_session_dependency():
         store = UserStore(db_session)
+        print(await store.list())
+    await db_session_dependency.aclose()
+
+
+@main.command()
+@run_with_asyncio
+async def list_classifications() -> None:
+    """Get users."""
+    await db_session_dependency.initialize(
+        config.database_url, config.database_password
+    )
+
+    async for db_session in db_session_dependency():
+        store = ClassificationStore(db_session)
         print(await store.list())
     await db_session_dependency.aclose()
