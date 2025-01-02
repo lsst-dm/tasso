@@ -3,6 +3,7 @@
 from typing import Annotated
 
 from fastapi import APIRouter, Depends
+from safir.dependencies.db_session import db_session_dependency
 from safir.dependencies.logger import logger_dependency
 from safir.metadata import get_metadata
 from structlog.stdlib import BoundLogger
@@ -10,6 +11,7 @@ from structlog.stdlib import BoundLogger
 from ..config import config
 from ..models.classification import Classification
 from ..models.index import Index
+from ..storage.classification import ClassificationStore
 
 __all__ = ["external_router", "get_index"]
 
@@ -56,4 +58,13 @@ async def get_index(
     "/classify", summary="Store classification for a given subject."
 )
 async def put_classification(classification: Classification) -> Classification:
+    await db_session_dependency.initialize(
+        config.database_url, config.database_password
+    )
+
+    async for db_session in db_session_dependency():
+        store = ClassificationStore(db_session)
+    await store.add(classification)
+    await db_session_dependency.aclose()
+
     return classification
