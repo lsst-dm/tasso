@@ -1,7 +1,6 @@
 """Classification run table."""
 
-from datetime import datetime
-
+from safir.pydantic import UtcDatetime
 from sqlalchemy import String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -22,8 +21,8 @@ class ClassificationRun(Base):
     collection: Mapped[str | None]
     namespace: Mapped[str | None]
     ticket: Mapped[str | None]
-    time_start: Mapped[datetime | None]
-    time_stop: Mapped[datetime | None]
+    time_start: Mapped[UtcDatetime | None]
+    time_stop: Mapped[UtcDatetime | None]
     max_classifications: Mapped[int]
 
     subjects: Mapped[list["Subject"]] = relationship()  # noqa: F821

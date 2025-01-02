@@ -1,7 +1,6 @@
 """The classification database table."""
 
-from datetime import datetime
-
+from safir.pydantic import UtcDatetime
 from sqlalchemy import ForeignKey, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -27,6 +26,6 @@ class Classification(Base):
     label_text: Mapped[str]
     comment: Mapped[str | None]
     flags: Mapped[int | None]
-    time_labeled: Mapped[datetime]
+    time_labeled: Mapped[UtcDatetime]
 
     subjects: Mapped[list["Subject"]] = relationship()  # noqa: F821

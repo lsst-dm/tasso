@@ -1,10 +1,10 @@
 """Representation of a classification."""
 
-from datetime import datetime
 from typing import Annotated
 from uuid import uuid4
 
 from pydantic import BaseModel, ConfigDict, Field
+from safir.pydantic import UtcDatetime
 
 __all__ = ["Classification"]
 
@@ -57,7 +57,7 @@ class Classification(BaseModel):
         description="Bitpacked flags",
     )
 
-    time_labeled: datetime = Field(
+    time_labeled: UtcDatetime = Field(
         title="time_labeled",
         description="Time label was created",
     )

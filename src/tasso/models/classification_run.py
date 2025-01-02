@@ -1,10 +1,10 @@
 """Representation of a classification run."""
 
-from datetime import datetime
 from typing import Annotated
 from uuid import uuid4
 
 from pydantic import BaseModel, ConfigDict, Field
+from safir.pydantic import UtcDatetime
 
 __all__ = ["ClassificationRun"]
 
@@ -56,13 +56,13 @@ class ClassificationRun(BaseModel):
         default=None,
     )
 
-    time_start: datetime | None = Field(
+    time_start: UtcDatetime | None = Field(
         title="time_start",
         description="Time run began.",
         default=None,
     )
 
-    time_stop: datetime | None = Field(
+    time_stop: UtcDatetime | None = Field(
         title="time_stop",
         description="Time run ended.",
         default=None,
