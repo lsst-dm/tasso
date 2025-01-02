@@ -57,14 +57,40 @@ async def get_index(
 @external_router.put(
     "/classify", summary="Store classification for a given subject."
 )
-async def put_classification(classification: Classification) -> Classification:
+async def put_classification(
+    classification: Classification,
+    logger: Annotated[BoundLogger, Depends(logger_dependency)],
+) -> Classification:
     await db_session_dependency.initialize(
         config.database_url, config.database_password
     )
 
     async for db_session in db_session_dependency():
         store = ClassificationStore(db_session)
+
+    # silently delete any prior classifications. Presently each subject can
+    # only be in one run so subject and user search is enough.
+    prior_classifications = await store.search(
+        {
+            "subject_id": classification.subject_id,
+            "user_id": classification.user_id,
+        }
+    )
+    if len(prior_classifications):
+        logger.info(
+            f"Deleting {len(prior_classifications)} classifications "
+            f"for subject {classification.subject_id} "
+            f"by user {classification.user_id}."
+        )
+        for class_i in prior_classifications:
+            await store.delete(class_i)
+
     await store.add(classification)
+    logger.info(
+        f"Created new classification {classification.classification_id} "
+        f"for subject {classification.subject_id} "
+        f"by user {classification.user_id}."
+    )
     await db_session_dependency.aclose()
 
     return classification
