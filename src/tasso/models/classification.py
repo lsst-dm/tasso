@@ -36,7 +36,7 @@ class Classification(BaseModel):
         description="id of classification run",
     )
 
-    label_id: str = Field(
+    label_id: int = Field(
         title="label_id",
         description="id of label",
     )
