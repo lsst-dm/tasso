@@ -17,9 +17,9 @@ class Classification(Base):
     classification_id: Mapped[str] = mapped_column(
         String(32), primary_key=True
     )
-    user_id: Mapped[int] = mapped_column(ForeignKey("user.user_id"))
-    subject_id: Mapped[int] = mapped_column(ForeignKey("subject.subject_id"))
-    run_id: Mapped[int] = mapped_column(
+    user_id: Mapped[str] = mapped_column(ForeignKey("user.user_id"))
+    subject_id: Mapped[str] = mapped_column(ForeignKey("subject.subject_id"))
+    run_id: Mapped[str] = mapped_column(
         ForeignKey("classification_run.run_id")
     )
     label_id: Mapped[int]
