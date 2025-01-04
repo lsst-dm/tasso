@@ -4,7 +4,7 @@ from typing import Annotated, ClassVar
 
 from fastapi import Depends
 from safir.dependencies.db_session import db_session_dependency
-from sqlalchemy import delete, select
+from sqlalchemy import delete, select, update
 from sqlalchemy.ext.asyncio import async_scoped_session
 
 __all__ = ["BaseStore"]
@@ -50,6 +50,26 @@ class BaseStore:
         new = self.storage(**record.model_dump())
         async with self._session.begin():
             self._session.add(new)
+
+    async def update(self, record: ClassVar) -> None:
+        """Update a model record identified by its primary key.
+
+        Parameters
+        ----------
+        record
+            The model instance to update.
+        """
+        stmt = (
+            update(self.storage)
+            .where(
+                getattr(self.storage, self.primary_key)
+                == getattr(record, self.primary_key)
+            )
+            .values(**record.model_dump())
+        )
+
+        async with self._session.begin():
+            await self._session.execute(stmt)
 
     async def delete(self, record: ClassVar) -> bool:
         """Delete a record.
@@ -120,16 +140,12 @@ class BaseStore:
         -------
         model
         """
-        print(key_value)
         stmt = select(self.storage).where(
             *[
                 getattr(self.storage, key) == value
                 for (key, value) in key_value.items()
             ]
         )
-        print(stmt)
         async with self._session.begin():
             result = await self._session.execute(stmt)
-        out = [self.model.model_validate(res[0]) for res in result.all()]
-        print(out)
-        return out
+        return [self.model.model_validate(res[0]) for res in result.all()]
