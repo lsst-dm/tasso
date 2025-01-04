@@ -35,4 +35,10 @@ class Subject(BaseModel):
         description="Location of the cutout image.",
     )
 
+    n_classifications: int = Field(
+        title="n_classifications",
+        description="Number of classifications",
+        default=0,
+    )
+
     model_config = ConfigDict(from_attributes=True)

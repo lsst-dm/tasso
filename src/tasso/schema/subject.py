@@ -19,3 +19,4 @@ class Subject(Base):
     )
     dia_source_id: Mapped[int]
     uri: Mapped[str]
+    n_classifications: Mapped[int]
