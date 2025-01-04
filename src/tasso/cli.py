@@ -144,12 +144,26 @@ async def list_users() -> None:
 @main.command()
 @run_with_asyncio
 async def list_classifications() -> None:
-    """Get users."""
+    """Get classifications."""
     await db_session_dependency.initialize(
         config.database_url, config.database_password
     )
 
     async for db_session in db_session_dependency():
         store = ClassificationStore(db_session)
+        print(await store.list())
+    await db_session_dependency.aclose()
+
+
+@main.command()
+@run_with_asyncio
+async def list_subjects() -> None:
+    """Get subjects."""
+    await db_session_dependency.initialize(
+        config.database_url, config.database_password
+    )
+
+    async for db_session in db_session_dependency():
+        store = SubjectStore(db_session)
         print(await store.list())
     await db_session_dependency.aclose()
