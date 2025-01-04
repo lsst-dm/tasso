@@ -12,6 +12,7 @@ from ..config import config
 from ..models.classification import Classification
 from ..models.index import Index
 from ..storage.classification import ClassificationStore
+from ..storage.subject import SubjectStore
 
 __all__ = ["external_router", "get_index"]
 
@@ -67,9 +68,14 @@ async def put_classification(
 
     async for db_session in db_session_dependency():
         store = ClassificationStore(db_session)
+        subject_store = SubjectStore(db_session)
 
-    # silently delete any prior classifications. Presently each subject can
-    # only be in one run so subject and user search is enough.
+    subject = await subject_store.get(classification.subject_id)
+    print(subject.n_classifications)
+
+    # silently delete any prior classifications of this subject by this user.
+    # Presently each subject can only be in one run so subject and user search
+    # is enough.
     prior_classifications = await store.search(
         {
             "subject_id": classification.subject_id,
@@ -91,6 +97,14 @@ async def put_classification(
         f"for subject {classification.subject_id} "
         f"by user {classification.user_id}."
     )
+
+    # count classifications of this subject by all users
+    prior_classifications = await store.search(
+        {"subject_id": classification.subject_id}
+    )
+    subject.n_classifications = len(prior_classifications)
+    await subject_store.update(subject)
+
     await db_session_dependency.aclose()
 
     return classification
