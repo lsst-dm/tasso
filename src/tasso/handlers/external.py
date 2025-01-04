@@ -1,5 +1,6 @@
 """Handlers for the app's external root, ``/tasso/``."""
 
+import random
 from typing import Annotated
 
 from fastapi import APIRouter, Depends
@@ -10,8 +11,11 @@ from structlog.stdlib import BoundLogger
 
 from ..config import config
 from ..models.classification import Classification
+from ..models.classification_run import ClassificationRun
 from ..models.index import Index
+from ..models.subject import Subject
 from ..storage.classification import ClassificationStore
+from ..storage.classification_run import ClassificationRunStore
 from ..storage.subject import SubjectStore
 
 __all__ = ["external_router", "get_index"]
@@ -108,3 +112,52 @@ async def put_classification(
     await db_session_dependency.aclose()
 
     return classification
+
+
+@external_router.get(
+    "/unclassified_subject",
+    summary="Return a subject that needs classification.",
+)
+async def get_unclassified_subject(
+    logger: Annotated[BoundLogger, Depends(logger_dependency)],
+) -> Subject | None:
+    await db_session_dependency.initialize(
+        config.database_url, config.database_password
+    )
+
+    async for db_session in db_session_dependency():
+        store = SubjectStore(db_session)
+        run_store = ClassificationRunStore(db_session)
+
+    runs = await run_store.get_active_runs()
+    if len(runs) == 0:
+        return None
+    elif len(runs) == 1:
+        run = runs[0]
+    else:
+        # choose a run at random.
+        run = random.choice(runs)  # noqa: S311
+
+    # this needs to not be hardcoded.
+    user_id = "dfad48bd59404103ba9c668e47f4c700"
+
+    return await store.get_unclassified(
+        user_id, run.run_id, run.max_classifications
+    )
+
+
+@external_router.get(
+    "/active_runs",
+    summary="Return runs that are active.",
+)
+async def get_active_runs(
+    logger: Annotated[BoundLogger, Depends(logger_dependency)],
+) -> list[ClassificationRun] | None:
+    await db_session_dependency.initialize(
+        config.database_url, config.database_password
+    )
+
+    async for db_session in db_session_dependency():
+        run_store = ClassificationRunStore(db_session)
+
+    return await run_store.get_active_runs()
