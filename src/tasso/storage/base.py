@@ -93,7 +93,7 @@ class BaseStore:
             result = await self._session.execute(stmt)
             return result.rowcount > 0
 
-    async def list(self) -> list[ClassVar]:  # type: ignore[misc]
+    async def list(self) -> list[ClassVar]:  # type: ignore[valid-type]
         """Return a list of model records.
 
         Returns
