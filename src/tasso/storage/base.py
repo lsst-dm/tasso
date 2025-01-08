@@ -30,7 +30,7 @@ class BaseStore:
         session: Annotated[
             async_scoped_session, Depends(db_session_dependency)
         ],
-        model: ClassVar,
+        model: ClassVar,  # type: ignore[misc]
         storage: ClassVar,
         primary_key: str,
     ) -> None:
@@ -39,7 +39,7 @@ class BaseStore:
         self.storage = storage
         self.primary_key = primary_key
 
-    async def add(self, record: ClassVar) -> None:
+    async def add(self, record: ClassVar) -> None:  # type: ignore[misc]
         """Add a new model record.
 
         Parameters
@@ -51,7 +51,7 @@ class BaseStore:
         async with self._session.begin():
             self._session.add(new)
 
-    async def update(self, record: ClassVar) -> None:
+    async def update(self, record: ClassVar) -> None:  # type: ignore[misc]
         """Update a model record identified by its primary key.
 
         Parameters
@@ -71,7 +71,7 @@ class BaseStore:
         async with self._session.begin():
             await self._session.execute(stmt)
 
-    async def delete(self, record: ClassVar) -> bool:
+    async def delete(self, record: ClassVar) -> bool:  # type: ignore[misc]
         """Delete a record.
 
         Parameters
@@ -93,7 +93,7 @@ class BaseStore:
             result = await self._session.execute(stmt)
             return result.rowcount > 0
 
-    async def list(self) -> list[ClassVar]:  # -> list[self.model]:
+    async def list(self) -> list[ClassVar]:  # type: ignore[misc]
         """Return a list of model records.
 
         Returns
@@ -107,7 +107,7 @@ class BaseStore:
             result = await self._session.scalars(stmt)
             return [self.model.model_validate(a) for a in result.all()]
 
-    async def get(self, value: str) -> ClassVar:
+    async def get(self, value: str) -> ClassVar:  # type: ignore[misc]
         """Get a model record by primary key.
 
         Returns
@@ -119,14 +119,14 @@ class BaseStore:
         )
         async with self._session.begin():
             result = await self._session.execute(stmt)
-            value = result.one_or_none()
-            print(value)
-            if value is None:
+            row = result.one_or_none()
+            print(row)
+            if row is None:
                 return None
             else:
-                return self.model.model_validate(value[0])
+                return self.model.model_validate(row[0])
 
-    async def search(self, key_value: dict[str, str]) -> ClassVar:
+    async def search(self, key_value: dict[str, str]) -> ClassVar:  # type: ignore[misc]
         """Get model records matching key-value pairs.
 
         Parameters

@@ -27,7 +27,7 @@ async def lifespan(_: FastAPI) -> AsyncGenerator:
         config.database_url, config.database_password
     )
     assert db_session_dependency._engine is not None  # noqa: S101,SLF001
-    db_session_dependency._engine.echo = config.database_echo  # noqa: SLF001
+    db_session_dependency._engine.echo = config.database_echo  # type: ignore[attr-defined] # noqa: SLF001
 
     # App runs here...
     yield

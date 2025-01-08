@@ -25,4 +25,4 @@ class ClassificationRun(Base):
     time_stop: Mapped[UtcDatetime | None]
     max_classifications: Mapped[int]
 
-    subjects: Mapped[list["Subject"]] = relationship()  # noqa: F821
+    subjects: Mapped[list["Subject"]] = relationship()  # type: ignore[name-defined]  # noqa: F821

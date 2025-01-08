@@ -28,4 +28,4 @@ class Classification(Base):
     flags: Mapped[int | None]
     time_labeled: Mapped[UtcDatetime]
 
-    subjects: Mapped[list["Subject"]] = relationship()  # noqa: F821
+    subjects: Mapped[list["Subject"]] = relationship()  # type: ignore[name-defined] # noqa: F821

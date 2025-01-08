@@ -16,4 +16,4 @@ class User(Base):
     user_id: Mapped[str] = mapped_column(String(32), primary_key=True)
     username: Mapped[str] = mapped_column(String(64))
     admin: Mapped[bool]
-    classifications: Mapped[list["Classification"]] = relationship()  # noqa: F821
+    classifications: Mapped[list["Classification"]] = relationship()  # type: ignore[name-defined] # noqa: F821

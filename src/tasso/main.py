@@ -102,11 +102,11 @@ async def validation_exception_handler(
     request: Request, exc: RequestValidationError | ValidationError
 ) -> JSONResponse:
     body = await request.body()
-    print(f"Request body: {body}")
+    print(f"Request body: {body}")  # type: ignore[str-bytes-safe]
     print(exc)
     return JSONResponse(
         status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-        content=jsonable_encoder({"detail": exc.errors(), "body": exc.body}),
+        content=jsonable_encoder({"detail": exc.errors(), "body": exc.body}),  # type: ignore[union-attr]
     )
 
 

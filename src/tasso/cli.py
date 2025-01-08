@@ -72,7 +72,7 @@ async def add_run(name: str) -> None:
         config.database_url, config.database_password
     )
 
-    r = ClassificationRun(name=name)
+    r = ClassificationRun(name=name)  # type: ignore[call-arg]
     async for db_session in db_session_dependency():
         store = ClassificationRunStore(db_session)
     await store.add(r)
@@ -104,7 +104,7 @@ async def add_subject(run_id: str, dia_source_id: int, uri: str) -> None:
         config.database_url, config.database_password
     )
 
-    s = Subject(run_id=run_id, dia_source_id=dia_source_id, uri=uri)
+    s = Subject(run_id=run_id, dia_source_id=dia_source_id, uri=uri)  # type: ignore[call-arg]
     async for db_session in db_session_dependency():
         store = SubjectStore(db_session)
     await store.add(s)
@@ -120,7 +120,7 @@ async def add_user(username: str) -> None:
         config.database_url, config.database_password
     )
 
-    u = User(username=username)
+    u = User(username=username)  # type: ignore[call-arg]
     async for db_session in db_session_dependency():
         store = UserStore(db_session)
     await store.add(u)
