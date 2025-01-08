@@ -59,3 +59,8 @@ update-deps-no-hashes:
 	    --output-file requirements/dev.txt requirements/dev.in
 	uv pip compile --upgrade					\
 	    --output-file requirements/tox.txt requirements/tox.in
+
+# local replication of the CI github action
+.PHONY: test
+test:
+	tox run -e py,coverage-report,typing --
