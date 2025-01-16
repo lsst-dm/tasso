@@ -85,7 +85,7 @@ class SubjectStore(BaseStore):
 
         async with self._session.begin():
             result = await self._session.execute(stmt)
-            value = result.one_or_none()
+            value = result.first()
             print(value)
             if value is None:
                 return None
