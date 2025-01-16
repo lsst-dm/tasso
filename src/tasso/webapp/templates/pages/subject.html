@@ -17,7 +17,7 @@
 
 	    <div class="flex pl-3 items-center">
 	    <button class="flex items-center px-4 py-3 border" hx-put="/tasso/classify"
-	            hx-vals='js:{"user_id":"6c9709f66ca5464fb3090e5b9a7fab8c",
+			      hx-vals='js:{"user":"{{user}}",
 			      "subject_id":"{{subject.subject_id}}",
 			      "run_id":"{{subject.run_id}}",
 			      "label_id":1, "label_text":"real",
@@ -31,7 +31,7 @@
 
 	    <div class="flex pl-3 items-center">
 	    <button class="flex items-center px-4 py-3 border" hx-put="/tasso/classify"
-	            hx-vals='js:{"user_id":"6c9709f66ca5464fb3090e5b9a7fab8c",
+			      hx-vals='js:{"user":"{{user}}",
 			      "subject_id":"{{subject.subject_id}}",
 			      "run_id":"{{subject.run_id}}",
 			      "label_id":0, "label_text":"bogus",

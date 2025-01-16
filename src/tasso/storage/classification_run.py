@@ -1,4 +1,4 @@
-"""Storage for users."""
+"""Storage for classification runs."""
 
 from typing import Annotated
 

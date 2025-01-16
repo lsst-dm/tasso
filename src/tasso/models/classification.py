@@ -21,9 +21,9 @@ class Classification(BaseModel):
         ),
     ]
 
-    user_id: str = Field(
-        title="user_id",
-        description="id of classifying user",
+    user: str = Field(
+        title="user",
+        description="name of classifying user",
     )
 
     subject_id: str = Field(

@@ -11,12 +11,12 @@ from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from safir.dependencies.db_session import db_session_dependency
+from safir.dependencies.gafaelfawr import auth_dependency
 from safir.dependencies.http_client import http_client_dependency
 from sqlalchemy.ext.asyncio import async_scoped_session
 
 from tasso.config import config
 from tasso.storage.subject import SubjectStore
-from tasso.storage.user import UserStore
 
 
 @asynccontextmanager
@@ -94,6 +94,7 @@ async def get_subjects(
 async def get_subject(
     request: Request,
     subject_id: str,
+    user: Annotated[str, Depends(auth_dependency)],
     session: Annotated[async_scoped_session, Depends(db_session_dependency)],
 ) -> HTMLResponse:
     """Return page for single subject."""
@@ -109,64 +110,8 @@ async def get_subject(
             request=request,
             context={
                 "subject": subject,
-                "image": encoded_image,
-            },
-        )
-    except Exception as e:
-        return templates.TemplateResponse(
-            name="pages/error.html",
-            request=request,
-            context={
-                "traceback": e,
-            },
-        )
-
-
-@webapp.get("/users/", response_class=HTMLResponse)
-async def get_users(
-    request: Request,
-    session: Annotated[async_scoped_session, Depends(db_session_dependency)],
-) -> HTMLResponse:
-    """Return users page."""
-    try:
-        async for db_session in db_session_dependency():
-            store = UserStore(db_session)
-            users = await store.list()
-
-        return templates.TemplateResponse(
-            name="pages/users.html",
-            request=request,
-            context={
-                "users": users,
-            },
-        )
-    except Exception as e:
-        return templates.TemplateResponse(
-            name="pages/error.html",
-            request=request,
-            context={
-                "traceback": e,
-            },
-        )
-
-
-@webapp.get("/users/{user_id}", response_class=HTMLResponse)
-async def get_user(
-    request: Request,
-    user_id: str,
-    session: Annotated[async_scoped_session, Depends(db_session_dependency)],
-) -> HTMLResponse:
-    """Return page for single user."""
-    try:
-        async for db_session in db_session_dependency():
-            store = UserStore(db_session)
-            user = await store.get(user_id)
-
-        return templates.TemplateResponse(
-            name="pages/user.html",
-            request=request,
-            context={
                 "user": user,
+                "image": encoded_image,
             },
         )
     except Exception as e:

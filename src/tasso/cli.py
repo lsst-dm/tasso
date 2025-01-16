@@ -11,14 +11,12 @@ from safir.dependencies.db_session import db_session_dependency
 from .config import config
 from .models.classification_run import ClassificationRun
 from .models.subject import Subject
-from .models.user import User
 from .schema import Base
 from .storage.classification import ClassificationStore
 from .storage.classification_run import ClassificationRunStore
 from .storage.subject import SubjectStore
-from .storage.user import UserStore
 
-__all__ = ["add_user", "help", "init", "main"]
+__all__ = ["help", "init", "main"]
 
 
 @click.group(context_settings={"help_option_names": ["-h", "--help"]})
@@ -108,36 +106,6 @@ async def add_subject(run_id: str, dia_source_id: int, uri: str) -> None:
     async for db_session in db_session_dependency():
         store = SubjectStore(db_session)
     await store.add(s)
-    await db_session_dependency.aclose()
-
-
-@main.command()
-@click.argument("username")
-@run_with_asyncio
-async def add_user(username: str) -> None:
-    """Add a user."""
-    await db_session_dependency.initialize(
-        config.database_url, config.database_password
-    )
-
-    u = User(username=username)  # type: ignore[call-arg]
-    async for db_session in db_session_dependency():
-        store = UserStore(db_session)
-    await store.add(u)
-    await db_session_dependency.aclose()
-
-
-@main.command()
-@run_with_asyncio
-async def list_users() -> None:
-    """Get users."""
-    await db_session_dependency.initialize(
-        config.database_url, config.database_password
-    )
-
-    async for db_session in db_session_dependency():
-        store = UserStore(db_session)
-        print(await store.list())
     await db_session_dependency.aclose()
 
 

@@ -83,14 +83,14 @@ async def put_classification(
     prior_classifications = await store.search(
         {
             "subject_id": classification.subject_id,
-            "user_id": classification.user_id,
+            "user": classification.user,
         }
     )
     if len(prior_classifications):
         logger.info(
             f"Deleting {len(prior_classifications)} classifications "
             f"for subject {classification.subject_id} "
-            f"by user {classification.user_id}."
+            f"by user {classification.user}."
         )
         for class_i in prior_classifications:
             await store.delete(class_i)
@@ -99,7 +99,7 @@ async def put_classification(
     logger.info(
         f"Created new classification {classification.classification_id} "
         f"for subject {classification.subject_id} "
-        f"by user {classification.user_id}."
+        f"by user {classification.user}."
     )
 
     # count classifications of this subject by all users
@@ -139,10 +139,10 @@ async def get_unclassified_subject(
         run = random.choice(runs)  # noqa: S311
 
     # this needs to not be hardcoded.
-    user_id = "dfad48bd59404103ba9c668e47f4c700"
+    user = "eric"
 
     return await store.get_unclassified(
-        user_id, run.run_id, run.max_classifications
+        user, run.run_id, run.max_classifications
     )
 
 

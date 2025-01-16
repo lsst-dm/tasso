@@ -51,7 +51,7 @@ class SubjectStore(BaseStore):
         return file_uri.read()
 
     async def get_unclassified(
-        self, user_id: str, run_id: str, max_classifications: int
+        self, user: str, run_id: str, max_classifications: int
     ) -> Subject | None:
         """Return a subject for classification.
 
@@ -61,7 +61,7 @@ class SubjectStore(BaseStore):
 
         Parameters
         ----------
-        user_id
+        user
            The user performing the classification.
         run_id
            The classification run to search for subjects.
@@ -76,8 +76,8 @@ class SubjectStore(BaseStore):
             )
             .outerjoin(SQLClassification)
             .where(
-                (SQLClassification.user_id != user_id)
-                | SQLClassification.user_id.is_(None)
+                (SQLClassification.user != user)
+                | SQLClassification.user.is_(None)
             )
         )
 
