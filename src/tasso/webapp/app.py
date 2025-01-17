@@ -1,6 +1,7 @@
 """tasso webapp."""
 
 import base64
+import random
 from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 from pathlib import Path
@@ -16,6 +17,7 @@ from safir.dependencies.http_client import http_client_dependency
 from sqlalchemy.ext.asyncio import async_scoped_session
 
 from tasso.config import config
+from tasso.storage.classification_run import ClassificationRunStore
 from tasso.storage.subject import SubjectStore
 
 
@@ -56,7 +58,10 @@ webapp.mount(
 
 
 @webapp.get("/", response_class=HTMLResponse)
-async def get_index(request: Request) -> HTMLResponse:
+async def get_index(
+    request: Request,
+    user: Annotated[str, Depends(auth_dependency)],
+) -> HTMLResponse:
     """Return index page."""
     return templates.TemplateResponse("pages/index.html", {"request": request})
 
@@ -65,6 +70,7 @@ async def get_index(request: Request) -> HTMLResponse:
 @webapp.get("/subjects/", response_class=HTMLResponse)
 async def get_subjects(
     request: Request,
+    user: Annotated[str, Depends(auth_dependency)],
     session: Annotated[async_scoped_session, Depends(db_session_dependency)],
 ) -> HTMLResponse:
     """Return subjects page."""
@@ -107,6 +113,56 @@ async def get_subject(
 
         return templates.TemplateResponse(
             name="pages/subject.html",
+            request=request,
+            context={
+                "subject": subject,
+                "user": user,
+                "image": encoded_image,
+            },
+        )
+    except Exception as e:
+        return templates.TemplateResponse(
+            name="pages/error.html",
+            request=request,
+            context={
+                "traceback": e,
+            },
+        )
+
+
+@webapp.get("/scan/", response_class=HTMLResponse)
+async def scan_subjects(
+    request: Request,
+    user: Annotated[str, Depends(auth_dependency)],
+    session: Annotated[async_scoped_session, Depends(db_session_dependency)],
+) -> HTMLResponse:
+    """Return page for unclassified subject."""
+    try:
+        async for db_session in db_session_dependency():
+            store = SubjectStore(db_session)
+            run_store = ClassificationRunStore(db_session)
+
+        runs = await run_store.get_active_runs()
+        if len(runs) == 0:
+            # throw an error for now
+            raise ValueError("No currently active runs")
+        if len(runs) == 1:  # noqa: SIM108
+            run = runs[0]
+        else:
+            # choose a run at random.
+            run = random.choice(runs)  # noqa: S311
+
+        subject = await store.get_unclassified(
+            user, run.run_id, run.max_classifications
+        )
+        if subject is None:
+            # throw an error for now
+            raise ValueError("No available subjects")
+        image_bytes = store.get_blob(subject)
+        encoded_image = base64.b64encode(image_bytes).decode("utf-8")
+
+        return templates.TemplateResponse(
+            name="pages/scan.html",
             request=request,
             context={
                 "subject": subject,

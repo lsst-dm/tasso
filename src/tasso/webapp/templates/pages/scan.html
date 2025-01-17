@@ -1,0 +1,51 @@
+{% extends "pages/base.html" %}
+{% block title %} subject {% endblock %}
+{% block content %}
+    <div id="scan_content" hx-get="/scan" hx-swap="innerHTML">
+	    <div class="flex pl-3 items-center">
+		<span class="text-large" name="subject_id">{{subject.subject_id}}</span>
+		&nbsp;
+		<span class="text-large" name="dia_source_id">{{subject.dia_source_id}}</span>
+		&nbsp;
+		<span class="text-large">{{subject.uri}}</span>
+		&nbsp;
+		<span class="text-large" name="run_id">{{subject.run_id}}</span>
+	    </div>
+	    <div class="flex pl-3 items-center">
+		<img src="data:image/png;base64,{{ image | safe }}">
+	    </div>
+
+	    <div class="flex pl-3 items-center">
+	    <button class="flex items-center px-4 py-3 border"
+		    hx-put="/tasso/classify_and_get_next"
+			      hx-vals='js:{"user":"{{user}}",
+			      "subject_id":"{{subject.subject_id}}",
+			      "run_id":"{{subject.run_id}}",
+			      "label_id":1, "label_text":"real",
+			      "comment":"",
+			      "flags":0,
+			      "time_labeled":Date.now()}'
+		    hx-ext="json-enc"
+		    hx-target="#scan_content">
+		    Real
+	    </button>
+	    </div>
+
+	    <div class="flex pl-3 items-center">
+	    <button class="flex items-center px-4 py-3 border"
+		    hx-put="/tasso/classify_and_get_next"
+			      hx-vals='js:{"user":"{{user}}",
+			      "subject_id":"{{subject.subject_id}}",
+			      "run_id":"{{subject.run_id}}",
+			      "label_id":0, "label_text":"bogus",
+			      "comment":"",
+			      "flags":0,
+			      "time_labeled":Date.now()}'
+		    hx-ext="json-enc"
+		    hx-target="#scan_content">
+		    Bogus
+	    </button>
+	    </div>
+
+    </div>
+{% endblock %}

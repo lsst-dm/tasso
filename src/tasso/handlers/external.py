@@ -11,7 +11,6 @@ from structlog.stdlib import BoundLogger
 
 from ..config import config
 from ..models.classification import Classification
-from ..models.classification_run import ClassificationRun
 from ..models.index import Index
 from ..models.subject import Subject
 from ..storage.classification import ClassificationStore
@@ -75,7 +74,6 @@ async def put_classification(
         subject_store = SubjectStore(db_session)
 
     subject = await subject_store.get(classification.subject_id)
-    print(subject.n_classifications)
 
     # silently delete any prior classifications of this subject by this user.
     # Presently each subject can only be in one run so subject and user search
@@ -119,6 +117,7 @@ async def put_classification(
     summary="Return a subject that needs classification.",
 )
 async def get_unclassified_subject(
+    user: str,
     logger: Annotated[BoundLogger, Depends(logger_dependency)],
 ) -> Subject | None:
     await db_session_dependency.initialize(
@@ -138,26 +137,24 @@ async def get_unclassified_subject(
         # choose a run at random.
         run = random.choice(runs)  # noqa: S311
 
-    # this needs to not be hardcoded.
-    user = "eric"
-
-    return await store.get_unclassified(
+    new_subject = await store.get_unclassified(
         user, run.run_id, run.max_classifications
     )
 
+    await db_session_dependency.aclose()
 
-@external_router.get(
-    "/active_runs",
-    summary="Return runs that are active.",
+    return new_subject
+
+
+@external_router.put(
+    "/classify_and_get_next",
+    summary="Store classification for a given subject and return "
+    "an unclassified one.",
 )
-async def get_active_runs(
+async def put_classification_and_return_new(
+    classification: Classification,
     logger: Annotated[BoundLogger, Depends(logger_dependency)],
-) -> list[ClassificationRun] | None:
-    await db_session_dependency.initialize(
-        config.database_url, config.database_password
-    )
+) -> Subject | None:
+    await put_classification(classification, logger)
 
-    async for db_session in db_session_dependency():
-        run_store = ClassificationRunStore(db_session)
-
-    return await run_store.get_active_runs()
+    return await get_unclassified_subject(classification.user, logger)
