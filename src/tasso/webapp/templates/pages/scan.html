@@ -1,7 +1,7 @@
 {% extends "pages/base.html" %}
 {% block title %} subject {% endblock %}
 {% block content %}
-    <div id="scan_content" hx-get="/scan" hx-swap="innerHTML">
+<div id="scan_content">
 	    <div class="flex pl-3 items-center">
 		<span class="text-large" name="subject_id">{{subject.subject_id}}</span>
 		&nbsp;
@@ -17,7 +17,7 @@
 
 	    <div class="flex pl-3 items-center">
 	    <button class="flex items-center px-4 py-3 border"
-		    hx-put="/tasso/classify_and_get_next"
+		    hx-put="/tasso/classify_and_reload"
 			      hx-vals='js:{"user":"{{user}}",
 			      "subject_id":"{{subject.subject_id}}",
 			      "run_id":"{{subject.run_id}}",
@@ -26,14 +26,14 @@
 			      "flags":0,
 			      "time_labeled":Date.now()}'
 		    hx-ext="json-enc"
-		    hx-target="#scan_content">
+		    hx-refresh="True">
 		    Real
 	    </button>
 	    </div>
 
 	    <div class="flex pl-3 items-center">
 	    <button class="flex items-center px-4 py-3 border"
-		    hx-put="/tasso/classify_and_get_next"
+		    hx-put="/tasso/classify_and_reload"
 			      hx-vals='js:{"user":"{{user}}",
 			      "subject_id":"{{subject.subject_id}}",
 			      "run_id":"{{subject.run_id}}",

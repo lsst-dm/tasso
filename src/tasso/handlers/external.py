@@ -4,6 +4,7 @@ import random
 from typing import Annotated
 
 from fastapi import APIRouter, Depends
+from fastapi.responses import JSONResponse
 from safir.dependencies.db_session import db_session_dependency
 from safir.dependencies.logger import logger_dependency
 from safir.metadata import get_metadata
@@ -147,14 +148,13 @@ async def get_unclassified_subject(
 
 
 @external_router.put(
-    "/classify_and_get_next",
-    summary="Store classification for a given subject and return "
-    "an unclassified one.",
+    "/classify_and_reload",
+    summary="Store classification for a given subject and reload",
 )
-async def put_classification_and_return_new(
+async def put_classification_and_reload(
     classification: Classification,
     logger: Annotated[BoundLogger, Depends(logger_dependency)],
-) -> Subject | None:
+) -> JSONResponse:
     await put_classification(classification, logger)
 
-    return await get_unclassified_subject(classification.user, logger)
+    return JSONResponse(content={}, headers={"HX-Refresh": "true"})
