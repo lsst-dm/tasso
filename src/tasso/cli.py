@@ -78,6 +78,23 @@ async def add_run(name: str) -> None:
 
 
 @main.command()
+@click.argument("run_id")
+@run_with_asyncio
+async def delete_run(run_id: str) -> None:
+    """Delete a classification run."""
+    await db_session_dependency.initialize(
+        config.database_url, config.database_password
+    )
+
+    # don't need exact record to delete
+    r = ClassificationRun(run_id=run_id, name="")  # type: ignore[call-arg]
+    async for db_session in db_session_dependency():
+        store = ClassificationRunStore(db_session)
+    await store.delete(r)
+    await db_session_dependency.aclose()
+
+
+@main.command()
 @run_with_asyncio
 async def list_runs() -> None:
     """Get runs."""
@@ -110,16 +127,20 @@ async def add_subject(run_id: str, dia_source_id: int, uri: str) -> None:
 
 
 @main.command()
+@click.argument("subject_id")
+@click.argument("run_id")
 @run_with_asyncio
-async def list_classifications() -> None:
-    """Get classifications."""
+async def delete_subject(subject_id: str, run_id: str) -> None:
+    """Delete a subject."""
     await db_session_dependency.initialize(
         config.database_url, config.database_password
     )
 
+    # We do not need the full record to delete
+    s = Subject(subject_id=subject_id, run_id=run_id, dia_source_id=0, uri="")  # type: ignore[call-arg]
     async for db_session in db_session_dependency():
-        store = ClassificationStore(db_session)
-        print(await store.list())
+        store = SubjectStore(db_session)
+    await store.delete(s)
     await db_session_dependency.aclose()
 
 
@@ -133,5 +154,19 @@ async def list_subjects() -> None:
 
     async for db_session in db_session_dependency():
         store = SubjectStore(db_session)
+        print(await store.list())
+    await db_session_dependency.aclose()
+
+
+@main.command()
+@run_with_asyncio
+async def list_classifications() -> None:
+    """Get classifications."""
+    await db_session_dependency.initialize(
+        config.database_url, config.database_password
+    )
+
+    async for db_session in db_session_dependency():
+        store = ClassificationStore(db_session)
         print(await store.list())
     await db_session_dependency.aclose()
