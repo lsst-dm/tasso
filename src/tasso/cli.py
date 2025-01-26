@@ -87,7 +87,7 @@ async def delete_run(run_id: str) -> None:
     )
 
     # don't need exact record to delete
-    r = ClassificationRun(run_id=run_id, name="")  # type: ignore[call-arg]
+    r = ClassificationRun(run_id=run_id, name="")
     async for db_session in db_session_dependency():
         store = ClassificationRunStore(db_session)
     await store.delete(r)
@@ -137,7 +137,7 @@ async def delete_subject(subject_id: str, run_id: str) -> None:
     )
 
     # We do not need the full record to delete
-    s = Subject(subject_id=subject_id, run_id=run_id, dia_source_id=0, uri="")  # type: ignore[call-arg]
+    s = Subject(subject_id=subject_id, run_id=run_id, dia_source_id=0, uri="")
     async for db_session in db_session_dependency():
         store = SubjectStore(db_session)
     await store.delete(s)
