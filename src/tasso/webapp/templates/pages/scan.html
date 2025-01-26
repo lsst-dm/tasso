@@ -17,6 +17,7 @@
 
 	    <div class="flex pl-3 items-center">
 	    <button class="flex items-center px-4 py-3 border"
+		    hx-trigger="click, keyup[key=='r'] from:body"
 		    hx-put="/tasso/classify_and_reload"
 			      hx-vals='js:{"user":"{{user}}",
 			      "subject_id":"{{subject.subject_id}}",
@@ -27,12 +28,13 @@
 			      "time_labeled":Date.now()}'
 		    hx-ext="json-enc"
 		    hx-refresh="True">
-		    Real
+		    Real (r)
 	    </button>
 	    </div>
 
 	    <div class="flex pl-3 items-center">
 	    <button class="flex items-center px-4 py-3 border"
+		    hx-trigger="click, keyup[key=='b'] from:body"
 		    hx-put="/tasso/classify_and_reload"
 			      hx-vals='js:{"user":"{{user}}",
 			      "subject_id":"{{subject.subject_id}}",
@@ -43,7 +45,58 @@
 			      "time_labeled":Date.now()}'
 		    hx-ext="json-enc"
 		    hx-target="#scan_content">
-		    Bogus
+		    Bogus (b)
+	    </button>
+	    </div>
+
+	    <div class="flex pl-3 items-center">
+	    <button class="flex items-center px-4 py-3 border"
+		    hx-trigger="click, keyup[key=='d'] from:body"
+		    hx-put="/tasso/classify_and_reload"
+			      hx-vals='js:{"user":"{{user}}",
+			      "subject_id":"{{subject.subject_id}}",
+			      "run_id":"{{subject.run_id}}",
+			      "label_id":2, "label_text":"dipole",
+			      "comment":"",
+			      "flags":0,
+			      "time_labeled":Date.now()}'
+		    hx-ext="json-enc"
+		    hx-target="#scan_content">
+		    Dipole (d)
+	    </button>
+	    </div>
+
+	    <div class="flex pl-3 items-center">
+	    <button class="flex items-center px-4 py-3 border"
+		    hx-trigger="click, keyup[key=='t'] from:body"
+		    hx-put="/tasso/classify_and_reload"
+			      hx-vals='js:{"user":"{{user}}",
+			      "subject_id":"{{subject.subject_id}}",
+			      "run_id":"{{subject.run_id}}",
+			      "label_id":3, "label_text":"trail",
+			      "comment":"",
+			      "flags":0,
+			      "time_labeled":Date.now()}'
+		    hx-ext="json-enc"
+		    hx-target="#scan_content">
+		    Trailed Source (d)
+	    </button>
+	    </div>
+
+	    <div class="flex pl-3 items-center">
+	    <button class="flex items-center px-4 py-3 border"
+		    hx-trigger="click, keyup[key=='c'] from:body"
+		    hx-put="/tasso/classify_and_reload"
+			      hx-vals='js:{"user":"{{user}}",
+			      "subject_id":"{{subject.subject_id}}",
+			      "run_id":"{{subject.run_id}}",
+			      "label_id":4, "label_text":"cosmic",
+			      "comment":"",
+			      "flags":0,
+			      "time_labeled":Date.now()}'
+		    hx-ext="json-enc"
+		    hx-target="#scan_content">
+		    Cosmic Ray (c)
 	    </button>
 	    </div>
 
