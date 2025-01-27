@@ -2,6 +2,7 @@
 
 from sqlalchemy import ForeignKey, String
 from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.types import BigInteger
 
 from .base import Base
 
@@ -17,6 +18,7 @@ class Subject(Base):
     run_id: Mapped[int] = mapped_column(
         ForeignKey("classification_run.run_id")
     )
-    dia_source_id: Mapped[int]
+    dia_source_id: Mapped[int] = mapped_column(BigInteger)
+    data_id: Mapped[str | None]
     uri: Mapped[str]
     n_classifications: Mapped[int]

@@ -30,6 +30,12 @@ class Subject(BaseModel):
         description="DIASourceId",
     )
 
+    data_id: str | None = Field(
+        title="data_id",
+        description="Data ID of the image producing the DIASource",
+        default=None,
+    )
+
     uri: str = Field(
         title="uri",
         description="Location of the cutout image.",
