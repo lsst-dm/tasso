@@ -62,9 +62,39 @@ def run() -> None:
 
 
 @main.command()
-@click.argument("name")
+@click.argument("name", help="Name of classification run.")
+@click.option(
+    "--comment", default=None, help="Description of classification run"
+)
+@click.option(
+    "--repo", default=None, help="Base repository for subjects in this run."
+)
+@click.option(
+    "--collection", default=None, help="Collection for subjects in this run."
+)
+@click.option(
+    "--namespace",
+    default=None,
+    help="APDB namespace for subjects in this run.",
+)
+@click.option(
+    "--ticket", default=None, help="Ticket number for this classification run"
+)
+@click.option(
+    "--max_classifications",
+    default=1,
+    help="Number of classifications needed per subject.",
+)
 @run_with_asyncio
-async def add_run(name: str) -> None:
+async def add_run(
+    name: str,
+    comment: str | None = None,
+    repo: str | None = None,
+    collection: str | None = None,
+    namespace: str | None = None,
+    ticket: str | None = None,
+    max_classifications: str | None = None,
+) -> None:
     """Add a classification run."""
     await db_session_dependency.initialize(
         config.database_url, config.database_password
