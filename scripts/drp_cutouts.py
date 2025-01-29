@@ -41,8 +41,12 @@ def make_and_upload_drp_cutouts(
     for ref in data_refs:
         try:
             dv_diaSourceTable = butler.get(ref)
-        except:
+            detection_config = butler.get(
+                "detectAndMeasureDiaSources_config", data_id=ref.dataId
+            )
+        except Exception as e:
             print(f"Could not load diaSource table for {ref.dataId}")
+            print(e)
             continue
         else:
             dv_diaSourceTable["instrument"] = "LSSTComCam"
