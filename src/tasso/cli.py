@@ -62,7 +62,7 @@ def run() -> None:
 
 
 @main.command()
-@click.argument("name", help="Name of classification run.")
+@click.argument("name")
 @click.option(
     "--comment", default=None, help="Description of classification run"
 )
