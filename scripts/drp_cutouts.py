@@ -8,6 +8,8 @@ from lsst.analysis.ap import (
     PlotImageSubtractionCutoutsTask,
 )
 
+from lsst.meas.base import IdGenerator
+
 
 @click.command()
 @click.argument("repo")
@@ -16,7 +18,10 @@ from lsst.analysis.ap import (
 @click.option("--where", default=None, help="Data query to apply.")
 @click.option("--output", "-o", default="./", help="Output location.")
 @click.option(
-    "--limit", default=None, help="Limit on how many data ids to process"
+    "--limit",
+    default=None,
+    help="Limit on how many data ids to process",
+    type=int,
 )
 def make_and_upload_drp_cutouts(
     repo,
@@ -39,18 +44,30 @@ def make_and_upload_drp_cutouts(
     )
 
     for ref in data_refs:
+        print(ref.dataId)
         try:
             dv_diaSourceTable = butler.get(ref)
             detection_config = butler.get(
-                "detectAndMeasureDiaSources_config", data_id=ref.dataId
+                "detectAndMeasureDiaSources_config", dataId=ref.dataId
+            )
+            unpacker = IdGenerator.unpacker_from_config(
+                detection_config.idGenerator,
+                butler.registry.expandDataId(instrument="LSSTComCam"),
             )
         except Exception as e:
-            print(f"Could not load diaSource table for {ref.dataId}")
+            #            print(f"Could not load diaSource table for {ref.dataId}")
             print(e)
             continue
         else:
             dv_diaSourceTable["instrument"] = "LSSTComCam"
-            cutoutTaskDrp.run(dv_diaSourceTable, butler)
+            did = dv_diaSourceTable.iloc[0]["diaSourceId"]
+            print(did, unpacker(did)[1])
+
+
+#            print([unpacker(did) for did in dv_diaSourceTable['diaSourceId']])
+# cutoutTaskDrp.run(dv_diaSourceTable, butler)
+
+# now loop over DIASources to upload to s3
 
 
 if __name__ == "__main__":
