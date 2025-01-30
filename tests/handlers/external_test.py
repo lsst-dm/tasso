@@ -10,8 +10,8 @@ from tasso.config import config
 
 @pytest.mark.asyncio
 async def test_get_index(client: AsyncClient) -> None:
-    """Test ``GET /tasso/``."""
-    response = await client.get("/tasso/")
+    """Test ``GET /tasso-api/``."""
+    response = await client.get("/tasso-api/")
     assert response.status_code == 200
     data = response.json()
     metadata = data["metadata"]
