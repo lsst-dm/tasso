@@ -46,7 +46,7 @@ BASE_DIR = Path(__file__).resolve().parent
 templates = Jinja2Templates(directory=str(Path(BASE_DIR, "templates")))
 
 router = APIRouter(
-    prefix="/webapp",
+    prefix="/tasso",
     tags=["Web Application"],
 )
 

@@ -51,7 +51,7 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     await db_session_dependency.aclose()
     await http_client_dependency.aclose()
 
-    logger.info("tasso application shut down complete.")
+    logger.info("tasso-api application shut down complete.")
 
 
 # The Safir library helps you set up logging around structlog,
@@ -60,12 +60,12 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
 configure_logging(
     profile=config.profile,
     log_level=config.log_level,
-    name="tasso",
+    name="tasso-api",
 )
 configure_uvicorn_logging(config.log_level)
 
 app = FastAPI(
-    title="tasso",
+    title="tasso-api",
     description=metadata("tasso")["Summary"],
     version=version("tasso"),
     openapi_url=f"{config.path_prefix}/openapi.json",
@@ -111,4 +111,4 @@ async def validation_exception_handler(
 
 
 # Start the frontend web application.
-app.mount("/webapp", webapp)
+app.mount("/tasso", webapp)

@@ -1,4 +1,4 @@
-"""Handlers for the app's external root, ``/tasso/``."""
+"""Handlers for the app's external root, ``/tasso-api/``."""
 
 import random
 from typing import Annotated
@@ -36,7 +36,7 @@ external_router = APIRouter()
 async def get_index(
     logger: Annotated[BoundLogger, Depends(logger_dependency)],
 ) -> Index:
-    """GET ``/tasso/`` (the app's external root).
+    """GET ``/tasso-api/`` (the app's external root).
 
     Customize this handler to return whatever the top-level resource of your
     application should return. For example, consider listing key API URLs.
