@@ -2,13 +2,12 @@
 # ruff: noqa
 
 import click
+import pandas as pd
 import lsst.daf.butler as dafButler
 from lsst.analysis.ap import (
     PlotImageSubtractionCutoutsConfig,
     PlotImageSubtractionCutoutsTask,
 )
-
-from lsst.meas.base import IdGenerator
 
 
 @click.command()
@@ -47,27 +46,37 @@ def make_and_upload_drp_cutouts(
         print(ref.dataId)
         try:
             dv_diaSourceTable = butler.get(ref)
-            detection_config = butler.get(
-                "detectAndMeasureDiaSources_config", dataId=ref.dataId
-            )
-            unpacker = IdGenerator.unpacker_from_config(
-                detection_config.idGenerator,
-                butler.registry.expandDataId(instrument="LSSTComCam"),
-            )
+
         except Exception as e:
-            #            print(f"Could not load diaSource table for {ref.dataId}")
+            print(f"Could not load diaSource table for {ref.dataId}")
             print(e)
             continue
         else:
             dv_diaSourceTable["instrument"] = "LSSTComCam"
-            did = dv_diaSourceTable.iloc[0]["diaSourceId"]
-            print(did, unpacker(did)[1])
+            upload_df = pd.DataFrame(dv_diaSourceTable["diaSourceId"])
+            upload_df.loc[:, "local_path"] = pd.Series(
+                [
+                    cutoutTaskDrp.cutout_path(did, f"{did}.png")
+                    for did in dv_diaSourceTable["diaSourceId"].tolist()
+                ],
+                index=dv_diaSourceTable.index,
+            )
+            upload_df.loc[:, "relative_path"] = upload_df[
+                "local_path"
+            ].str.split("images/")
+            upload_df.loc[:, "s3_path"] = pd.Series(
+                [
+                    f"s3://rubin-ap-cutouts/{run_id}/{rel}"
+                    for rel in upload_df["relative_path"].values
+                ],
+                index=dv_diaSourceTable.index,
+            )
+            del upload_df["relative_path"]
+            upload_df.loc[:, "dataId"] = str(ref.dataId)
+            print(upload_df.head(2))
+            # cutoutTaskDrp.run(dv_diaSourceTable, butler)
 
-
-#            print([unpacker(did) for did in dv_diaSourceTable['diaSourceId']])
-# cutoutTaskDrp.run(dv_diaSourceTable, butler)
-
-# now loop over DIASources to upload to s3
+        # now loop over DIASources to upload to s3
 
 
 if __name__ == "__main__":
