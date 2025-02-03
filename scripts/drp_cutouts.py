@@ -22,7 +22,7 @@ from lsst.analysis.ap import (
     help="Limit on how many data ids to process",
     type=int,
 )
-def make_and_upload_drp_cutouts(
+def make_drp_cutouts(
     repo,
     collections,
     run_id,
@@ -61,9 +61,11 @@ def make_and_upload_drp_cutouts(
                 ],
                 index=dv_diaSourceTable.index,
             )
-            upload_df.loc[:, "relative_path"] = upload_df[
-                "local_path"
-            ].str.split("images/")
+            upload_df.loc[:, "relative_path"] = (
+                upload_df["local_path"]
+                .str.split("images/")
+                .apply(lambda x: x[1])
+            )
             upload_df.loc[:, "s3_path"] = pd.Series(
                 [
                     f"s3://rubin-ap-cutouts/{run_id}/{rel}"
@@ -73,11 +75,11 @@ def make_and_upload_drp_cutouts(
             )
             del upload_df["relative_path"]
             upload_df.loc[:, "dataId"] = str(ref.dataId)
-            print(upload_df.head(2))
-            # cutoutTaskDrp.run(dv_diaSourceTable, butler)
-
-        # now loop over DIASources to upload to s3
+            cutoutTaskDrp.run(dv_diaSourceTable, butler)
+            upload_df.to_csv(
+                f"{output}/upload_{ref.dataId['visit']}_{ref.dataId['detector']}.csv"
+            )
 
 
 if __name__ == "__main__":
-    make_and_upload_drp_cutouts()
+    make_drp_cutouts()
