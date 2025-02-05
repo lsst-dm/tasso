@@ -143,7 +143,7 @@ async def list_runs() -> None:
 @click.argument("dia_source_id")
 @click.argument("uri")
 @click.option(
-    "data_id", default=None, help="data ID of image DIASource comes from"
+    "--data-id", default=None, help="data ID of image DIASource comes from"
 )
 @run_with_asyncio
 async def add_subject(
