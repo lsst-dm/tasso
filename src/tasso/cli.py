@@ -142,14 +142,21 @@ async def list_runs() -> None:
 @click.argument("run_id")
 @click.argument("dia_source_id")
 @click.argument("uri")
+@click.option(
+    "data_id", default=None, help="data ID of image DIASource comes from"
+)
 @run_with_asyncio
-async def add_subject(run_id: str, dia_source_id: int, uri: str) -> None:
+async def add_subject(
+    run_id: str, dia_source_id: int, uri: str, data_id: str | None = None
+) -> None:
     """Add a subject."""
     await db_session_dependency.initialize(
         config.database_url, config.database_password
     )
 
-    s = Subject(run_id=run_id, dia_source_id=dia_source_id, uri=uri)  # type: ignore[call-arg]
+    s = Subject(
+        run_id=run_id, dia_source_id=dia_source_id, uri=uri, data_id=data_id
+    )  # type: ignore[call-arg]
     async for db_session in db_session_dependency():
         store = SubjectStore(db_session)
     await store.add(s)

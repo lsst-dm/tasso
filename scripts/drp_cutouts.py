@@ -13,7 +13,6 @@ from lsst.analysis.ap import (
 @click.command()
 @click.argument("repo")
 @click.option("--collections", help="Butler collections.")
-@click.option("--run-id", help="tasso run to upload to.")
 @click.option("--where", default=None, help="Data query to apply.")
 @click.option("--output", "-o", default="./", help="Output location.")
 @click.option(
@@ -25,12 +24,11 @@ from lsst.analysis.ap import (
 def make_drp_cutouts(
     repo,
     collections,
-    run_id,
     where=None,
     output="./",
     limit: int | None = None,
 ):
-    """Make image subtraction cutouts from a DRP run and upload them to s3."""
+    """Make image subtraction cutouts from a DRP run and output metadata for s3 upload."""
     butler = dafButler.Butler(repo, collections=collections)
 
     cutoutConfigDrp = PlotImageSubtractionCutoutsConfig()
@@ -66,14 +64,6 @@ def make_drp_cutouts(
                 .str.split("images/")
                 .apply(lambda x: x[1])
             )
-            upload_df.loc[:, "s3_path"] = pd.Series(
-                [
-                    f"s3://rubin-ap-cutouts/{run_id}/{rel}"
-                    for rel in upload_df["relative_path"].values
-                ],
-                index=dv_diaSourceTable.index,
-            )
-            del upload_df["relative_path"]
             upload_df.loc[:, "dataId"] = str(ref.dataId)
             cutoutTaskDrp.run(dv_diaSourceTable, butler)
             upload_df.to_csv(
