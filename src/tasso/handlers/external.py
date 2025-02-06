@@ -158,21 +158,3 @@ async def put_classification_and_reload(
     await put_classification(classification, logger)
 
     return JSONResponse(content={}, headers={"HX-Refresh": "true"})
-
-
-@external_router.put(
-    "/subject",
-    summary="Store a new subject",
-)
-async def put_subject(
-    subject: Subject,
-    logger: Annotated[BoundLogger, Depends(logger_dependency)],
-) -> JSONResponse:
-    await db_session_dependency.initialize(
-        config.database_url, config.database_password
-    )
-    async for db_session in db_session_dependency():
-        store = SubjectStore(db_session)
-    await store.add(subject)
-    await db_session_dependency.aclose()
-    return JSONResponse(content={})
