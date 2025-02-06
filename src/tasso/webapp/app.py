@@ -169,3 +169,53 @@ async def get_subject(
                 "traceback": e,
             },
         )
+
+
+@webapp.get("/about", response_class=HTMLResponse)
+async def about(
+    request: Request,
+    user: Annotated[str, Depends(auth_dependency)],
+    session: Annotated[async_scoped_session, Depends(db_session_dependency)],
+) -> HTMLResponse:
+    """Return the about page."""
+    try:
+        return templates.TemplateResponse(
+            name="pages/about.html",
+            request=request,
+            context={
+                "user": user,
+            },
+        )
+    except Exception as e:
+        return templates.TemplateResponse(
+            name="pages/error.html",
+            request=request,
+            context={
+                "traceback": e,
+            },
+        )
+
+
+@webapp.get("/guide", response_class=HTMLResponse)
+async def guide(
+    request: Request,
+    user: Annotated[str, Depends(auth_dependency)],
+    session: Annotated[async_scoped_session, Depends(db_session_dependency)],
+) -> HTMLResponse:
+    """Return the guide page."""
+    try:
+        return templates.TemplateResponse(
+            name="pages/guide.html",
+            request=request,
+            context={
+                "user": user,
+            },
+        )
+    except Exception as e:
+        return templates.TemplateResponse(
+            name="pages/error.html",
+            request=request,
+            context={
+                "traceback": e,
+            },
+        )

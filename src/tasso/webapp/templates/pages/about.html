@@ -1,0 +1,29 @@
+{% extends "pages/base.html" %}
+{% block title %} About tasso {% endblock %}
+{% block content %}
+    <div id="about_content">
+	    <div class="flex pl-3 items-center">
+		<span class="text-large font-bold">Welcome to tasso!</span>
+	    </div>
+	    <div class="flex pl-3 items-center">
+		<p><a href="https://en.wiktionary.org/wiki/%CF%84%CE%AC%CF%83%CF%83%CF%89">τάσσω</a> is an Ancient Greek word that means to arrange, to put in order.  It is an etymological root of "taxonomy."</p>
+
+	    </div>
+	    <div class="flex pl-3 items-center">
+		<p>tasso is a cutout display and labeling app built by <a href="https://faculty.washington.edu/ecbellm/">Eric Bellm</a> using
+		<a href="https://fastapi.tiangolo.com">FastAPI</a> and <a href="https://safir.lsst.io">Safir</a>.
+		Some components were derived from <a href="https://github.com/lsst/cm-service">cm-service</a>.
+		</p>
+	    </div>
+	    <div class="flex pl-3 items-center">
+		<p>The tasso source code is <a href="https://github.com/lsst-dm/tasso">available on Github</a>.
+		</p>
+
+	    <div class="flex pl-3 items-center">
+		    <p>See the <a href={{url_for('guide')}}>Guide</a> to learn more about how to use tasso.
+		</p>
+
+
+	    </div>
+    </div>
+{% endblock %}
