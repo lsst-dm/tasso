@@ -3,9 +3,6 @@
 {% block content %}
 <div id="scan_content">
 	    <div class="d-flex flex-column">
-		<div class="p-1 " name="subject_id">{{subject.subject_id}}</div>
-		<div class="p-1" name="dia_source_id">{{subject.dia_source_id}}</div>
-		<div class="p-1" name="run_id">{{subject.run_id}}</div>
 		<div class="p-2 mx-auto">
 		<img src="data:image/png;base64,{{ image | safe }}">
 		    </div>
@@ -89,5 +86,11 @@
 		    Cosmic Ray (c)
 	    </button>
 
+    </div>
+	    <div class="d-flex flex-column mt-4">
+		<div class="p-1" name="dia_source_id">DiaSourceId: {{subject.dia_source_id}}</div>
+		<div class="p-1" name="data_id">DataId: {{subject.data_id}}</div>
+		<div class="p-1 " name="subject_id"><a href="{{url_for('get_subject',subject_id=subject.subject_id)}}">Permalink for subject</a></div>
+		<div class="p-1" name="run_id">Run: {{subject.run_id}}</div>
     </div>
 {% endblock %}
