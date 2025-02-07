@@ -1,0 +1,95 @@
+{% extends "pages/base.html" %}
+{% block title %} Subject page {% endblock %}
+{% block content %}
+<div id="subject_content">
+
+	    <div class="d-flex flex-column mt-4">
+		<div class="p-1" name="dia_source_id">DiaSourceId: {{subject.dia_source_id}}</div>
+		<div class="p-1" name="data_id">DataId: {{subject.data_id}}</div>
+		<div class="p-1 " name="subject_id"><a href="{{url_for('get_subject',subject_id=subject.subject_id)}}">Permalink for subject</a></div>
+		<div class="p-1" name="run_id">Run: {{subject.run_id}}</div>
+    </div>
+
+	    <div class="d-flex flex-column">
+		<div class="p-2 mx-auto">
+		<img src="data:image/png;base64,{{ image | safe }}">
+		    </div>
+
+	    </div>
+
+	    <div class="d-grid gap-4 col-4 mx-auto">
+		<div class="p-1">Re-classify this subject:</div>
+
+	    <button type="button" class="btn btn-success"
+		    hx-trigger="click, keyup[key=='r'] from:body"
+		    hx-put="/tasso-api/classify"
+			      hx-vals='js:{"user":"{{user}}",
+			      "subject_id":"{{subject.subject_id}}",
+			      "run_id":"{{subject.run_id}}",
+			      "label_id":1, "label_text":"real",
+			      "comment":"",
+			      "flags":0,
+			      "time_labeled":Date.now()}'
+		    hx-ext="json-enc">
+		    Real (r)
+	    </button>
+
+	    <button type="button" class="btn btn-danger"
+		    hx-trigger="click, keyup[key=='b'] from:body"
+		    hx-put="/tasso-api/classify"
+			      hx-vals='js:{"user":"{{user}}",
+			      "subject_id":"{{subject.subject_id}}",
+			      "run_id":"{{subject.run_id}}",
+			      "label_id":0, "label_text":"bogus",
+			      "comment":"",
+			      "flags":0,
+			      "time_labeled":Date.now()}'
+		    hx-ext="json-enc">
+		    Bogus (b)
+	    </button>
+
+	    <button type="button" class="btn btn-warning"
+		    hx-trigger="click, keyup[key=='d'] from:body"
+		    hx-put="/tasso-api/classify"
+			      hx-vals='js:{"user":"{{user}}",
+			      "subject_id":"{{subject.subject_id}}",
+			      "run_id":"{{subject.run_id}}",
+			      "label_id":2, "label_text":"dipole",
+			      "comment":"",
+			      "flags":0,
+			      "time_labeled":Date.now()}'
+		    hx-ext="json-enc">
+		    Dipole (d)
+	    </button>
+
+	    <button type="button" class="btn btn-warning"
+		    hx-trigger="click, keyup[key=='t'] from:body"
+		    hx-put="/tasso-api/classify"
+			      hx-vals='js:{"user":"{{user}}",
+			      "subject_id":"{{subject.subject_id}}",
+			      "run_id":"{{subject.run_id}}",
+			      "label_id":3, "label_text":"trail",
+			      "comment":"",
+			      "flags":0,
+			      "time_labeled":Date.now()}'
+		    hx-ext="json-enc">
+		    Trailed Source (t)
+	    </button>
+
+	    <button type="button" class="btn btn-warning"
+		    hx-trigger="click, keyup[key=='c'] from:body"
+		    hx-put="/tasso-api/classify"
+			      hx-vals='js:{"user":"{{user}}",
+			      "subject_id":"{{subject.subject_id}}",
+			      "run_id":"{{subject.run_id}}",
+			      "label_id":4, "label_text":"cosmic",
+			      "comment":"",
+			      "flags":0,
+			      "time_labeled":Date.now()}'
+		    hx-ext="json-enc">
+		    Cosmic Ray (c)
+	    </button>
+
+    </div>
+
+{% endblock %}

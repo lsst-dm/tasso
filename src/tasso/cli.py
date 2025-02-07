@@ -1,0 +1,209 @@
+"""Tasso command-line interface."""
+
+import click
+import structlog
+import uvicorn
+from safir.asyncio import run_with_asyncio
+from safir.click import display_help
+from safir.database import create_database_engine, initialize_database
+from safir.dependencies.db_session import db_session_dependency
+
+from .config import config
+from .models.classification_run import ClassificationRun
+from .models.subject import Subject
+from .schema import Base
+from .storage.classification import ClassificationStore
+from .storage.classification_run import ClassificationRunStore
+from .storage.subject import SubjectStore
+
+__all__ = ["help", "init", "main"]
+
+
+@click.group(context_settings={"help_option_names": ["-h", "--help"]})
+@click.version_option(message="%(version)s")
+def main() -> None:
+    """Administrative command-line interface for tasso."""
+
+
+@main.command()
+@click.argument("topic", default=None, required=False, nargs=1)
+@click.argument("subtopic", default=None, required=False, nargs=1)
+@click.pass_context
+def help(ctx: click.Context, topic: str | None, subtopic: str | None) -> None:
+    """Show help for any command."""
+    display_help(main, ctx, topic, subtopic)
+
+
+@main.command()
+@click.option(
+    "--reset", is_flag=True, help="Delete all existing database data."
+)
+@run_with_asyncio
+async def init(*, reset: bool) -> None:  # pragma: no cover
+    """Initialize the database if needed."""
+    logger = structlog.get_logger(config.logger_name)
+    engine = create_database_engine(
+        config.database_url, config.database_password
+    )
+    await initialize_database(
+        engine, logger, schema=Base.metadata, reset=reset
+    )
+    await engine.dispose()
+
+
+@main.command()
+def run() -> None:
+    """Run the application (for testing only)."""
+    uvicorn.run(
+        "tasso.main:app",
+        reload=True,
+        reload_dirs=["src"],
+    )
+
+
+@main.command()
+@click.argument("name")
+@click.option(
+    "--comment", default=None, help="Description of classification run"
+)
+@click.option(
+    "--repo", default=None, help="Base repository for subjects in this run."
+)
+@click.option(
+    "--collection", default=None, help="Collection for subjects in this run."
+)
+@click.option(
+    "--namespace",
+    default=None,
+    help="APDB namespace for subjects in this run.",
+)
+@click.option(
+    "--ticket", default=None, help="Ticket number for this classification run"
+)
+@click.option(
+    "--max_classifications",
+    default=1,
+    help="Number of classifications needed per subject.",
+)
+@run_with_asyncio
+async def add_run(
+    name: str,
+    comment: str | None = None,
+    repo: str | None = None,
+    collection: str | None = None,
+    namespace: str | None = None,
+    ticket: str | None = None,
+    max_classifications: str | None = None,
+) -> None:
+    """Add a classification run."""
+    await db_session_dependency.initialize(
+        config.database_url, config.database_password
+    )
+
+    r = ClassificationRun(name=name)  # type: ignore[call-arg]
+    async for db_session in db_session_dependency():
+        store = ClassificationRunStore(db_session)
+    await store.add(r)
+    await db_session_dependency.aclose()
+
+
+@main.command()
+@click.argument("run_id")
+@run_with_asyncio
+async def delete_run(run_id: str) -> None:
+    """Delete a classification run."""
+    await db_session_dependency.initialize(
+        config.database_url, config.database_password
+    )
+
+    # don't need exact record to delete
+    r = ClassificationRun(run_id=run_id, name="")
+    async for db_session in db_session_dependency():
+        store = ClassificationRunStore(db_session)
+    await store.delete(r)
+    await db_session_dependency.aclose()
+
+
+@main.command()
+@run_with_asyncio
+async def list_runs() -> None:
+    """Get runs."""
+    await db_session_dependency.initialize(
+        config.database_url, config.database_password
+    )
+
+    async for db_session in db_session_dependency():
+        store = ClassificationRunStore(db_session)
+        print(await store.list())
+    await db_session_dependency.aclose()
+
+
+@main.command()
+@click.argument("run_id")
+@click.argument("dia_source_id")
+@click.argument("uri")
+@click.option(
+    "--data-id", default=None, help="data ID of image DIASource comes from"
+)
+@run_with_asyncio
+async def add_subject(
+    run_id: str, dia_source_id: int, uri: str, data_id: str | None = None
+) -> None:
+    """Add a subject."""
+    await db_session_dependency.initialize(
+        config.database_url, config.database_password
+    )
+
+    s = Subject(
+        run_id=run_id, dia_source_id=dia_source_id, uri=uri, data_id=data_id
+    )  # type: ignore[call-arg]
+    async for db_session in db_session_dependency():
+        store = SubjectStore(db_session)
+    await store.add(s)
+    await db_session_dependency.aclose()
+
+
+@main.command()
+@click.argument("subject_id")
+@click.argument("run_id")
+@run_with_asyncio
+async def delete_subject(subject_id: str, run_id: str) -> None:
+    """Delete a subject."""
+    await db_session_dependency.initialize(
+        config.database_url, config.database_password
+    )
+
+    # We do not need the full record to delete
+    s = Subject(subject_id=subject_id, run_id=run_id, dia_source_id=0, uri="")
+    async for db_session in db_session_dependency():
+        store = SubjectStore(db_session)
+    await store.delete(s)
+    await db_session_dependency.aclose()
+
+
+@main.command()
+@run_with_asyncio
+async def list_subjects() -> None:
+    """Get subjects."""
+    await db_session_dependency.initialize(
+        config.database_url, config.database_password
+    )
+
+    async for db_session in db_session_dependency():
+        store = SubjectStore(db_session)
+        print(await store.list())
+    await db_session_dependency.aclose()
+
+
+@main.command()
+@run_with_asyncio
+async def list_classifications() -> None:
+    """Get classifications."""
+    await db_session_dependency.initialize(
+        config.database_url, config.database_password
+    )
+
+    async for db_session in db_session_dependency():
+        store = ClassificationStore(db_session)
+        print(await store.list())
+    await db_session_dependency.aclose()

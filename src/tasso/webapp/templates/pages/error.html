@@ -1,0 +1,9 @@
+{% extends "pages/base.html" %}
+{% block title %} Error {% endblock %}
+{% block content %}
+<div id="error_content">
+    <div class="d-flex flex-column">
+	    {{traceback}}
+    </div>
+</div>
+{% endblock %}

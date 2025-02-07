@@ -17,9 +17,22 @@ init:
 	uv pip install --upgrade pre-commit
 	pre-commit install
 
+
+.PHONY: run-compose
+run-compose:
+	docker compose up --wait
+
 .PHONY: run
-run:
-	tox run -e run
+run: TASSO_DATABASE_PORT=$(shell docker compose port postgresql 5432 | cut -d: -f2)
+run: export TASSO_DATABASE_USER=tasso
+run: export TASSO_DATABASE_SCHEMA=tasso
+run: export TASSO_DATABASE_URL=postgresql://${TASSO_DATABASE_USER}@localhost:${TASSO_DATABASE_PORT}/tasso
+run: export TASSO_DATABASE_PASSWORD=INSECURE-PASSWORD
+run: export TASSO_DATABASE_ECHO=true
+run: run-compose
+	tasso init
+	tasso run
+	#tox run -e run
 
 .PHONY: update
 update: update-deps init
@@ -46,3 +59,8 @@ update-deps-no-hashes:
 	    --output-file requirements/dev.txt requirements/dev.in
 	uv pip compile --upgrade					\
 	    --output-file requirements/tox.txt requirements/tox.in
+
+# local replication of the CI github action
+.PHONY: test
+test:
+	tox run -e py,coverage-report,typing --

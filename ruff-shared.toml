@@ -27,6 +27,8 @@ docstring-code-format = true
 
 [lint]
 ignore = [
+    "T201",    # I will print if I want to
+    "TD002",   # don't nag me about assigning TODOs
     "ANN401",  # sometimes Any is the right type
     "ARG001",  # unused function arguments are often legitimate
     "ARG002",  # unused method arguments are often legitimate
