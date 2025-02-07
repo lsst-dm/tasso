@@ -1,34 +1,37 @@
 <html class="h-full">
 <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{% block title %}{% endblock %}</title>
     <link
-            href="{{ url_for('static', path='/css/output.css') }}"
+            href="{{ url_for('static', path='/css/bootstrap.min.css') }}"
             rel="stylesheet"
     />
-    <script src="{{ url_for('static', path='/js/ag-grid-community.min.js') }}"></script>
+    <script src="{{ url_for('static', path='/js/bootstrap.min.js') }}"></script>
     <script src="{{ url_for('static', path='/js/htmx.min.js') }}"></script>
     <script src="{{ url_for('static', path='/js/json-enc.js') }}"></script>
 </head>
-<body class="h-full">
-<!--    <nav class="border-b border-gray-200 bg-teal-700">-->
-    <nav class="flex items-center justify-between sm:flex-wrap bg-teal-700 p-6">
-        <div class="px-4 sm:px-6 lg:px-8 space-x-2">
-                <div><a href="{{ url_for('scan_subjects')}}"><img class="block h-10 w-auto lg:block" src="{{ url_for('static', path='/images/lsst_white_logo.png') }}" alt="Rubin"></a></div>
-                </div>
-                <div> <span class="text-3xl tracking-tight text-white">
-                    <a href="{{ url_for('scan_subjects')}}">τάσσω</a> </span></div>
-		<div> <a href="{{url_for('about')}}" class="text-white hover:text-gray-300"> About </a> </div>
-		<div> <a href="{{url_for('guide')}}" class="text-white hover:text-gray-300"> Guide </a> </div>
-                <!--<div> <a href="#responsive-header" class="text-white hover:text-gray-300"> Leaderboard </a> </div>-->
+<body class="bg-light-subtle">
+    <nav class="navbar navbar-expand-lg" style="background-color: #058B8C;">
+      <div class="container-fluid">
+                <a class="navbar-brand" href="{{ url_for('scan_subjects')}}"><img class="img-fluid d-inline-block align-middle" src="{{ url_for('static', path='/images/lsst_white_logo.png') }}" alt="Rubin" width=100>
+			<span style="color: #fff">τάσσω</span>
+		</a>
+	    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+	<div class="collapse navbar-collapse" id="navbarNav">
+	      <div class="navbar-nav">
+	      <a class="nav-link" href="{{url_for('about')}}" style="color: #fff"> About </a>
+	      <a class="nav-link" href="{{url_for('guide')}}" style="color: #fff"> Guide </a>
+	      <a class="nav-link" href="#" style="color: #fff">{{user}}</a>
+	      </div>
         </div>
 
-        <div class="flex items-center lg:flex-grow-0">
-            <div class="space-x-4">
-                {{user}}
-            </div>
-        </div>
+    </div>
     </nav>
-    <div class="py-10">
+    <div class="container text-left mt-4">
         <main>
             {% block content %}
             {% endblock %}
