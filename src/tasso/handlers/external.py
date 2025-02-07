@@ -4,7 +4,7 @@ import random
 from typing import Annotated
 
 from fastapi import APIRouter, Depends
-from fastapi.responses import JSONResponse
+from fastapi.responses import HTMLResponse, JSONResponse
 from safir.dependencies.db_session import db_session_dependency
 from safir.dependencies.logger import logger_dependency
 from safir.metadata import get_metadata
@@ -65,7 +65,7 @@ async def get_index(
 async def put_classification(
     classification: Classification,
     logger: Annotated[BoundLogger, Depends(logger_dependency)],
-) -> Classification:
+) -> HTMLResponse:
     await db_session_dependency.initialize(
         config.database_url, config.database_password
     )
@@ -110,7 +110,7 @@ async def put_classification(
 
     await db_session_dependency.aclose()
 
-    return classification
+    return HTMLResponse(content="Submitted!", status_code=200)
 
 
 @external_router.get(

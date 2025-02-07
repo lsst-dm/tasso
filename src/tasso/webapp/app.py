@@ -107,36 +107,6 @@ async def scan_subjects(
         )
 
 
-# this is going to need to be paginated
-@webapp.get("/subjects/", response_class=HTMLResponse)
-async def get_subjects(
-    request: Request,
-    user: Annotated[str, Depends(auth_dependency)],
-    session: Annotated[async_scoped_session, Depends(db_session_dependency)],
-) -> HTMLResponse:
-    """Return subjects page."""
-    try:
-        async for db_session in db_session_dependency():
-            store = SubjectStore(db_session)
-            subjects = await store.list()
-
-        return templates.TemplateResponse(
-            name="pages/subjects.html",
-            request=request,
-            context={
-                "subjects": subjects,
-            },
-        )
-    except Exception as e:
-        return templates.TemplateResponse(
-            name="pages/error.html",
-            request=request,
-            context={
-                "traceback": e,
-            },
-        )
-
-
 @webapp.get("/subjects/{subject_id}", response_class=HTMLResponse)
 async def get_subject(
     request: Request,
