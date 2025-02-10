@@ -8,6 +8,7 @@ from lsst.analysis.ap import (
     PlotImageSubtractionCutoutsConfig,
     PlotImageSubtractionCutoutsTask,
 )
+from pathlib import Path
 
 
 @click.command()
@@ -49,6 +50,12 @@ def make_drp_cutouts(
     )
 
     for ref in data_refs:
+        upload_file = f"{output}/upload_{ref.dataId['visit']}_{ref.dataId['detector']}.csv"
+        upload_file_Path = Path(upload_file)
+        if upload_file_Path.is_file():
+            print(f"{ref.dataId} already processed, continuing")
+            continue
+
         print(ref.dataId)
         try:
             dv_diaSourceTable = butler.get(ref)
@@ -69,9 +76,7 @@ def make_drp_cutouts(
             )
             upload_df.loc[:, "dataId"] = str(ref.dataId)
             cutoutTaskDrp.run(dv_diaSourceTable, butler, njobs=njobs)
-            upload_df.to_csv(
-                f"{output}/upload_{ref.dataId['visit']}_{ref.dataId['detector']}.csv"
-            )
+            upload_df.to_csv(upload_file)
         except Exception as e:
             print(f"Failure processing {ref.dataId}")
             print(e)
