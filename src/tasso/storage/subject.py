@@ -68,16 +68,22 @@ class SubjectStore(BaseStore):
         max_classifiations
             The number of classifications each subject should receive.
         """
+        # find classifications by this user this run
+        subq = select(SQLClassification).where(
+            SQLClassification.run_id == run_id, SQLClassification.user == user
+        )
+
         stmt = (
             select(SQLSubject)
             .where(
+                # get subjects needing more classifications in this run
                 SQLSubject.run_id == run_id,
                 SQLSubject.n_classifications < max_classifications,
             )
-            .outerjoin(SQLClassification)
+            .outerjoin(subq)
             .where(
-                (SQLClassification.user != user)
-                | SQLClassification.user.is_(None)
+                # only return those this user hasn't classified
+                subq.user.is_(None)
             )
         )
 
