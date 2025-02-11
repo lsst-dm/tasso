@@ -68,25 +68,36 @@ class SubjectStore(BaseStore):
         max_classifiations
             The number of classifications each subject should receive.
         """
-        stmt = (
-            select(SQLSubject)
+        # find classifications by this user this run
+        subq = (
+            select(SQLClassification.user, SQLClassification.subject_id)
             .where(
-                SQLSubject.run_id == run_id,
-                SQLSubject.n_classifications < max_classifications,
+                SQLClassification.run_id == run_id,
+                SQLClassification.user == user,
             )
-            .outerjoin(SQLClassification)
-            .where(
-                (SQLClassification.user != user)
-                | SQLClassification.user.is_(None)
-            )
+            .subquery("subq")
         )
 
-        print(stmt)
+        stmt = (
+            select(SQLSubject)
+            .join_from(
+                SQLSubject,
+                subq,
+                SQLSubject.subject_id == subq.c.subject_id,
+                isouter=True,
+            )
+            .where(
+                # get subjects needing more classifications in this run
+                SQLSubject.run_id == run_id,
+                SQLSubject.n_classifications < max_classifications,
+                # only return those this user hasn't classified
+                subq.c.user.is_(None),
+            )
+        )
 
         async with self._session.begin():
             result = await self._session.execute(stmt)
             value = result.first()
-            print(value)
             if value is None:
                 return None
             else:

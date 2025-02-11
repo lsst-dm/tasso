@@ -57,7 +57,6 @@ class ClassificationRunStore(BaseStore):
             ),
         )
 
-        print(stmt)
         async with self._session.begin():
             result = await self._session.execute(stmt)
         return [self.model.model_validate(res[0]) for res in result.all()]
