@@ -46,11 +46,16 @@ def make_drp_cutouts(
     )
 
     data_refs = butler.query_datasets(
-        "goodSeeingDiff_diaSrcTable", where=where, limit=limit
+        cutoutConfigDrp.diff_image_type + "_diaSrcTable",
+        where=where,
+        limit=limit,
     )
 
+    upload_path = Path(f"{output}/upload/")
+    upload_path.mkdir(parents=True, exist_ok=True)
+
     for ref in data_refs:
-        upload_file = f"{output}/upload_{ref.dataId['visit']}_{ref.dataId['detector']}.csv"
+        upload_file = f"{output}/upload/upload_{ref.dataId['visit']}_{ref.dataId['detector']}.csv.gz"
         upload_file_Path = Path(upload_file)
         if upload_file_Path.is_file():
             print(f"{ref.dataId} already processed, continuing")
