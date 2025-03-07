@@ -159,7 +159,14 @@ async def add_subject(
     )  # type: ignore[call-arg]
     async for db_session in db_session_dependency():
         store = SubjectStore(db_session)
-    await store.add(s)
+    prior_subject = await store.search(
+        # using uri rather than dia_source_id because of type issues.
+        # note that this query could become inefficient as the db gets
+        # lots of subjects in it
+        {"uri": uri, "run_id": run_id}
+    )
+    if len(prior_subject) == 0:
+        await store.add(s)
     await db_session_dependency.aclose()
 
 
