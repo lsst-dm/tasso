@@ -1,5 +1,8 @@
 """Tasso command-line interface."""
 
+import ast
+from datetime import datetime
+
 import click
 import structlog
 import uvicorn
@@ -93,17 +96,114 @@ async def add_run(
     collection: str | None = None,
     namespace: str | None = None,
     ticket: str | None = None,
-    max_classifications: str | None = None,
+    max_classifications: int = 1,
 ) -> None:
     """Add a classification run."""
     await db_session_dependency.initialize(
         config.database_url, config.database_password
     )
 
-    r = ClassificationRun(name=name)  # type: ignore[call-arg]
+    r = ClassificationRun(
+        name=name,
+        comment=comment,
+        repo=repo,
+        collection=collection,
+        namespace=namespace,
+        ticket=ticket,
+        max_classifications=max_classifications,
+        time_start=datetime.utcnow(),  # noqa: DTZ003
+    )  # type: ignore[call-arg]
     async for db_session in db_session_dependency():
         store = ClassificationRunStore(db_session)
     await store.add(r)
+    await db_session_dependency.aclose()
+
+
+@main.command()
+@click.argument("run_id")
+@click.option("--name", default=None, help="Name of classification run")
+@click.option(
+    "--comment", default=None, help="Description of classification run"
+)
+@click.option(
+    "--repo", default=None, help="Base repository for subjects in this run."
+)
+@click.option(
+    "--collection", default=None, help="Collection for subjects in this run."
+)
+@click.option(
+    "--namespace",
+    default=None,
+    help="APDB namespace for subjects in this run.",
+)
+@click.option(
+    "--ticket", default=None, help="Ticket number for this classification run"
+)
+@click.option(
+    "--max_classifications",
+    default=None,
+    help="Number of classifications needed per subject.",
+)
+@run_with_asyncio
+async def update_run(
+    run_id: str,
+    name: str | None,
+    comment: str | None = None,
+    repo: str | None = None,
+    collection: str | None = None,
+    namespace: str | None = None,
+    ticket: str | None = None,
+    max_classifications: int | None = None,
+) -> None:
+    """Update a classification run."""
+    await db_session_dependency.initialize(
+        config.database_url, config.database_password
+    )
+
+    async for db_session in db_session_dependency():
+        store = ClassificationRunStore(db_session)
+
+    run = await store.get(run_id)
+
+    properties = [
+        "name",
+        "comment",
+        "repo",
+        "collection",
+        "namespace",
+        "ticket",
+        "max_classifications",
+    ]
+
+    for k in properties:
+        v = ast.literal_eval(k)
+        if v is not None:
+            setattr(run, k, v)
+
+    print(run)
+
+    await store.update(run)
+    await db_session_dependency.aclose()
+
+
+@main.command()
+@click.argument("run_id")
+@run_with_asyncio
+async def end_run(run_id: str) -> None:
+    """Set the stop time of a classification run to now.
+
+    The web app will no longer display subjects from the run.
+    """
+    await db_session_dependency.initialize(
+        config.database_url, config.database_password
+    )
+
+    # don't need exact record to delete
+    async for db_session in db_session_dependency():
+        store = ClassificationRunStore(db_session)
+    run = await store.get(run_id)
+    run.time_stop = datetime.utcnow()  # noqa: DTZ003
+    await store.update(run)
     await db_session_dependency.aclose()
 
 
