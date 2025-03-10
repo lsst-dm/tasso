@@ -234,7 +234,9 @@ async def list_runs() -> None:
 
     async for db_session in db_session_dependency():
         store = ClassificationRunStore(db_session)
-        print(await store.list())
+        runs = await store.list()
+        for run in runs:
+            print(run)
     await db_session_dependency.aclose()
 
 
