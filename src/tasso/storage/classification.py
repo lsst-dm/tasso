@@ -7,7 +7,7 @@ from safir.dependencies.db_session import db_session_dependency
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import async_scoped_session
 
-from ..models.classification import Classification
+from ..models.classification import Classification, Leaderboard
 from ..models.classification_run import ClassificationRun
 from ..schema import Classification as SQLClassification
 from .base import BaseStore
@@ -38,8 +38,8 @@ class ClassificationStore(BaseStore):
         )
 
     async def get_leaderboard(
-        self, runs: ClassificationRun, limit: int = 50
-    ) -> list:
+        self, runs: list[ClassificationRun], limit: int = 50
+    ) -> list[Leaderboard]:
         """Return leaderboard by classification count for current run.
 
         Returns
@@ -60,11 +60,11 @@ class ClassificationStore(BaseStore):
 
         async with self._session.begin():
             result = await self._session.execute(stmt)
-            # result not validated against a model at present
-        return result.all()
+            # not validated at present
+        return result.all()  # type: ignore # noqa: PGH003
 
     async def get_recent(
-        self, runs: ClassificationRun, limit: int = 50
+        self, runs: list[ClassificationRun], limit: int = 50
     ) -> list[Classification]:
         """Return most recent classifications.
 

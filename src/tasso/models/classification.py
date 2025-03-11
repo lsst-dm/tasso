@@ -6,7 +6,7 @@ from uuid import uuid4
 from pydantic import BaseModel, ConfigDict, Field
 from safir.pydantic import UtcDatetime
 
-__all__ = ["Classification"]
+__all__ = ["Classification", "Leaderboard"]
 
 
 class Classification(BaseModel):
@@ -60,6 +60,22 @@ class Classification(BaseModel):
     time_labeled: UtcDatetime = Field(
         title="time_labeled",
         description="Time label was created",
+    )
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class Leaderboard(BaseModel):
+    """Classification leaderboard."""
+
+    user: str = Field(
+        title="user",
+        description="name of classifying user",
+    )
+
+    count: int = Field(
+        title="count",
+        description="classification count",
     )
 
     model_config = ConfigDict(from_attributes=True)
