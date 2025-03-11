@@ -1,6 +1,5 @@
 """Tasso command-line interface."""
 
-import ast
 from datetime import datetime
 
 import click
@@ -142,6 +141,7 @@ async def add_run(
 @click.option(
     "--max_classifications",
     default=None,
+    type=int,
     help="Number of classifications needed per subject.",
 )
 @run_with_asyncio
@@ -176,7 +176,7 @@ async def update_run(
     ]
 
     for k in properties:
-        v = ast.literal_eval(k)
+        v = eval(k)  # noqa: S307
         if v is not None:
             setattr(run, k, v)
 
@@ -226,7 +226,14 @@ async def delete_run(run_id: str) -> None:
 
 @main.command()
 @run_with_asyncio
-async def list_runs() -> None:
+@click.option(
+    "--active",
+    is_flag=True,
+    default=False,
+    show_default=True,
+    help="Show only active runs.",
+)
+async def list_runs(*, active: bool = False) -> None:
     """Get runs."""
     await db_session_dependency.initialize(
         config.database_url, config.database_password
@@ -234,7 +241,10 @@ async def list_runs() -> None:
 
     async for db_session in db_session_dependency():
         store = ClassificationRunStore(db_session)
-        runs = await store.list()
+        if active:
+            runs = await store.get_active_runs()
+        else:
+            runs = await store.list()
         for run in runs:
             print(run)
     await db_session_dependency.aclose()

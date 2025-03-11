@@ -17,28 +17,73 @@
 			      hx-vals='js:{"user":"{{user}}",
 			      "subject_id":"{{subject.subject_id}}",
 			      "run_id":"{{subject.run_id}}",
-			      "label_id":1, "label_text":"real",
+			      "label_id":5, "label_text":"real_transient",
 			      "comment":"",
 			      "flags":0,
 			      "time_labeled":Date.now()}'
 		    hx-ext="json-enc"
 		    hx-refresh="True">
-		    Real (r)
+		    Real: Transient (r)
 	    </button>
 
-	    <button type="button" class="btn btn-danger"
-		    hx-trigger="click, keyup[key=='b'] from:body"
+	    <button type="button" class="btn btn-success"
+		    hx-trigger="click, keyup[key=='v'] from:body"
 		    hx-put="/tasso-api/classify_and_reload"
 			      hx-vals='js:{"user":"{{user}}",
 			      "subject_id":"{{subject.subject_id}}",
 			      "run_id":"{{subject.run_id}}",
-			      "label_id":0, "label_text":"bogus",
+			      "label_id":6, "label_text":"real-variable",
+			      "comment":"",
+			      "flags":0,
+			      "time_labeled":Date.now()}'
+		    hx-ext="json-enc"
+		    hx-refresh="True">
+		    Real: Variable (v)
+	    </button>
+
+	    <button type="button" class="btn btn-success"
+		    hx-trigger="click, keyup[key=='t'] from:body"
+		    hx-put="/tasso-api/classify_and_reload"
+			      hx-vals='js:{"user":"{{user}}",
+			      "subject_id":"{{subject.subject_id}}",
+			      "run_id":"{{subject.run_id}}",
+			      "label_id":3, "label_text":"trail",
 			      "comment":"",
 			      "flags":0,
 			      "time_labeled":Date.now()}'
 		    hx-ext="json-enc"
 		    hx-target="#scan_content">
-		    Bogus (b)
+		    Real: Trailed Source (t)
+	    </button>
+
+	    <button type="button" class="btn btn-warning"
+		    hx-trigger="click, keyup[key=='n'] from:body"
+		    hx-put="/tasso-api/classify_and_reload"
+			      hx-vals='js:{"user":"{{user}}",
+			      "subject_id":"{{subject.subject_id}}",
+			      "run_id":"{{subject.run_id}}",
+			      "label_id":7, "label_text":"noise",
+			      "comment":"",
+			      "flags":0,
+			      "time_labeled":Date.now()}'
+		    hx-ext="json-enc"
+		    hx-target="#scan_content">
+		    Noise / no detection (n)
+	    </button>
+
+	    <button type="button" class="btn btn-warning"
+		    hx-trigger="click, kryup[key=='u'] from:body"
+		    hx-put="/tasso-api/classify_and_reload"
+			      hx-vals='js:{"user":"{{user}}",
+			      "subject_id":"{{subject.subject_id}}",
+			      "run_id":"{{subject.run_id}}",
+			      "label_id":8, "label_text":"unsure",
+			      "comment":"",
+			      "flags":0,
+			      "time_labeled":Date.now()}'
+		    hx-ext="json-enc"
+		    hx-target="#scan_content">
+		    Unsure / ambiguous (u)
 	    </button>
 
 	    <button type="button" class="btn btn-warning"
@@ -56,19 +101,50 @@
 		    Dipole (d)
 	    </button>
 
-	    <button type="button" class="btn btn-warning"
-		    hx-trigger="click, keyup[key=='t'] from:body"
+	    <button type="button" class="btn btn-danger"
+		    hx-trigger="click, keyup[key=='b'] from:body"
 		    hx-put="/tasso-api/classify_and_reload"
 			      hx-vals='js:{"user":"{{user}}",
 			      "subject_id":"{{subject.subject_id}}",
 			      "run_id":"{{subject.run_id}}",
-			      "label_id":3, "label_text":"trail",
+			      "label_id":0, "label_text":"bogus",
 			      "comment":"",
 			      "flags":0,
 			      "time_labeled":Date.now()}'
 		    hx-ext="json-enc"
 		    hx-target="#scan_content">
-		    Trailed Source (t)
+		    General bogus (b)
+	    </button>
+
+	    <button type="button" class="btn btn-danger"
+		    hx-trigger="click, keyup[key=='x'] from:body"
+		    hx-put="/tasso-api/classify_and_reload"
+			      hx-vals='js:{"user":"{{user}}",
+			      "subject_id":"{{subject.subject_id}}",
+			      "run_id":"{{subject.run_id}}",
+			      "label_id":9, "label_text":"bad-subtraction",
+			      "comment":"",
+			      "flags":0,
+			      "time_labeled":Date.now()}'
+		    hx-ext="json-enc"
+		    hx-target="#scan_content">
+		    Bad subtraction (x)
+	    </button>
+
+
+	    <button type="button" class="btn btn-danger"
+		    hx-trigger="click, keyup[key=='d'] from:body"
+		    hx-put="/tasso-api/classify_and_reload"
+			      hx-vals='js:{"user":"{{user}}",
+			      "subject_id":"{{subject.subject_id}}",
+			      "run_id":"{{subject.run_id}}",
+			      "label_id":10, "label_text":"diffraction-spike",
+			      "comment":"",
+			      "flags":0,
+			      "time_labeled":Date.now()}'
+		    hx-ext="json-enc"
+		    hx-target="#scan_content">
+		    Bright star / diffraction spike (s)
 	    </button>
 
 	    <button type="button" class="btn btn-warning"
