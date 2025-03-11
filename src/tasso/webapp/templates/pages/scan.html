@@ -9,158 +9,167 @@
 
 	    </div>
 
-	    <div class="d-grid gap-4 col-4 mx-auto">
+    <div class="container">
+        <div class="row">
+            <!-- Left column: Success and Warning buttons -->
+            <div class="col-md-6 d-grid gap-3">
+                <button type="button" class="btn btn-success h-100 py-2"
+                    hx-trigger="click, keyup[key=='r'] from:body"
+                    hx-put="/tasso-api/classify_and_reload"
+                    hx-vals='js:{"user":"{{user}}",
+                    "subject_id":"{{subject.subject_id}}",
+                    "run_id":"{{subject.run_id}}",
+                    "label_id":5, "label_text":"real_transient",
+                    "comment":"",
+                    "flags":0,
+                    "time_labeled":Date.now()}'
+                    hx-ext="json-enc"
+                    hx-refresh="True">
+                    Real: Transient (r)
+                </button>
 
-	    <button type="button" class="btn btn-success"
-		    hx-trigger="click, keyup[key=='r'] from:body"
-		    hx-put="/tasso-api/classify_and_reload"
-			      hx-vals='js:{"user":"{{user}}",
-			      "subject_id":"{{subject.subject_id}}",
-			      "run_id":"{{subject.run_id}}",
-			      "label_id":5, "label_text":"real_transient",
-			      "comment":"",
-			      "flags":0,
-			      "time_labeled":Date.now()}'
-		    hx-ext="json-enc"
-		    hx-refresh="True">
-		    Real: Transient (r)
-	    </button>
+                <button type="button" class="btn btn-success h-100 py-2"
+                    hx-trigger="click, keyup[key=='v'] from:body"
+                    hx-put="/tasso-api/classify_and_reload"
+                    hx-vals='js:{"user":"{{user}}",
+                    "subject_id":"{{subject.subject_id}}",
+                    "run_id":"{{subject.run_id}}",
+                    "label_id":6, "label_text":"real-variable",
+                    "comment":"",
+                    "flags":0,
+                    "time_labeled":Date.now()}'
+                    hx-ext="json-enc"
+                    hx-refresh="True">
+                    Real: Variable (v)
+                </button>
 
-	    <button type="button" class="btn btn-success"
-		    hx-trigger="click, keyup[key=='v'] from:body"
-		    hx-put="/tasso-api/classify_and_reload"
-			      hx-vals='js:{"user":"{{user}}",
-			      "subject_id":"{{subject.subject_id}}",
-			      "run_id":"{{subject.run_id}}",
-			      "label_id":6, "label_text":"real-variable",
-			      "comment":"",
-			      "flags":0,
-			      "time_labeled":Date.now()}'
-		    hx-ext="json-enc"
-		    hx-refresh="True">
-		    Real: Variable (v)
-	    </button>
+                <button type="button" class="btn btn-success h-100 py-2"
+                    hx-trigger="click, keyup[key=='t'] from:body"
+                    hx-put="/tasso-api/classify_and_reload"
+                    hx-vals='js:{"user":"{{user}}",
+                    "subject_id":"{{subject.subject_id}}",
+                    "run_id":"{{subject.run_id}}",
+                    "label_id":3, "label_text":"trail",
+                    "comment":"",
+                    "flags":0,
+                    "time_labeled":Date.now()}'
+                    hx-ext="json-enc"
+                    hx-target="#scan_content">
+                    Real: Trailed Source (t)
+                </button>
 
-	    <button type="button" class="btn btn-success"
-		    hx-trigger="click, keyup[key=='t'] from:body"
-		    hx-put="/tasso-api/classify_and_reload"
-			      hx-vals='js:{"user":"{{user}}",
-			      "subject_id":"{{subject.subject_id}}",
-			      "run_id":"{{subject.run_id}}",
-			      "label_id":3, "label_text":"trail",
-			      "comment":"",
-			      "flags":0,
-			      "time_labeled":Date.now()}'
-		    hx-ext="json-enc"
-		    hx-target="#scan_content">
-		    Real: Trailed Source (t)
-	    </button>
+                <button type="button" class="btn btn-warning h-100 py-2"
+                    hx-trigger="click, keyup[key=='n'] from:body"
+                    hx-put="/tasso-api/classify_and_reload"
+                    hx-vals='js:{"user":"{{user}}",
+                    "subject_id":"{{subject.subject_id}}",
+                    "run_id":"{{subject.run_id}}",
+                    "label_id":7, "label_text":"noise",
+                    "comment":"",
+                    "flags":0,
+                    "time_labeled":Date.now()}'
+                    hx-ext="json-enc"
+                    hx-target="#scan_content">
+                    Noise / no detection (n)
+                </button>
 
-	    <button type="button" class="btn btn-warning"
-		    hx-trigger="click, keyup[key=='n'] from:body"
-		    hx-put="/tasso-api/classify_and_reload"
-			      hx-vals='js:{"user":"{{user}}",
-			      "subject_id":"{{subject.subject_id}}",
-			      "run_id":"{{subject.run_id}}",
-			      "label_id":7, "label_text":"noise",
-			      "comment":"",
-			      "flags":0,
-			      "time_labeled":Date.now()}'
-		    hx-ext="json-enc"
-		    hx-target="#scan_content">
-		    Noise / no detection (n)
-	    </button>
+                <button type="button" class="btn btn-warning h-100 py-2"
+                    hx-trigger="click, keyup[key=='u'] from:body"
+                    hx-put="/tasso-api/classify_and_reload"
+                    hx-vals='js:{"user":"{{user}}",
+                    "subject_id":"{{subject.subject_id}}",
+                    "run_id":"{{subject.run_id}}",
+                    "label_id":8, "label_text":"unsure",
+                    "comment":"",
+                    "flags":0,
+                    "time_labeled":Date.now()}'
+                    hx-ext="json-enc"
+                    hx-target="#scan_content">
+                    Unsure / ambiguous (u)
+                </button>
 
-	    <button type="button" class="btn btn-warning"
-		    hx-trigger="click, kryup[key=='u'] from:body"
-		    hx-put="/tasso-api/classify_and_reload"
-			      hx-vals='js:{"user":"{{user}}",
-			      "subject_id":"{{subject.subject_id}}",
-			      "run_id":"{{subject.run_id}}",
-			      "label_id":8, "label_text":"unsure",
-			      "comment":"",
-			      "flags":0,
-			      "time_labeled":Date.now()}'
-		    hx-ext="json-enc"
-		    hx-target="#scan_content">
-		    Unsure / ambiguous (u)
-	    </button>
+                <button type="button" class="btn btn-warning h-100 py-2"
+                    hx-trigger="click, keyup[key=='d'] from:body"
+                    hx-put="/tasso-api/classify_and_reload"
+                    hx-vals='js:{"user":"{{user}}",
+                    "subject_id":"{{subject.subject_id}}",
+                    "run_id":"{{subject.run_id}}",
+                    "label_id":2, "label_text":"dipole",
+                    "comment":"",
+                    "flags":0,
+                    "time_labeled":Date.now()}'
+                    hx-ext="json-enc"
+                    hx-target="#scan_content">
+                    Dipole (d)
+                </button>
+            </div>
 
-	    <button type="button" class="btn btn-warning"
-		    hx-trigger="click, keyup[key=='d'] from:body"
-		    hx-put="/tasso-api/classify_and_reload"
-			      hx-vals='js:{"user":"{{user}}",
-			      "subject_id":"{{subject.subject_id}}",
-			      "run_id":"{{subject.run_id}}",
-			      "label_id":2, "label_text":"dipole",
-			      "comment":"",
-			      "flags":0,
-			      "time_labeled":Date.now()}'
-		    hx-ext="json-enc"
-		    hx-target="#scan_content">
-		    Dipole (d)
-	    </button>
+            <!-- Right column: Danger buttons -->
+            <div class="col-md-6 d-grid gap-5">
+                <button type="button" class="btn btn-danger h-100 py-2"
+                    hx-trigger="click, keyup[key=='b'] from:body"
+                    hx-put="/tasso-api/classify_and_reload"
+                    hx-vals='js:{"user":"{{user}}",
+                    "subject_id":"{{subject.subject_id}}",
+                    "run_id":"{{subject.run_id}}",
+                    "label_id":0, "label_text":"bogus",
+                    "comment":"",
+                    "flags":0,
+                    "time_labeled":Date.now()}'
+                    hx-ext="json-enc"
+                    hx-target="#scan_content">
+                    General bogus (b)
+                </button>
 
-	    <button type="button" class="btn btn-danger"
-		    hx-trigger="click, keyup[key=='b'] from:body"
-		    hx-put="/tasso-api/classify_and_reload"
-			      hx-vals='js:{"user":"{{user}}",
-			      "subject_id":"{{subject.subject_id}}",
-			      "run_id":"{{subject.run_id}}",
-			      "label_id":0, "label_text":"bogus",
-			      "comment":"",
-			      "flags":0,
-			      "time_labeled":Date.now()}'
-		    hx-ext="json-enc"
-		    hx-target="#scan_content">
-		    General bogus (b)
-	    </button>
+                <button type="button" class="btn btn-danger h-100 py-2"
+                    hx-trigger="click, keyup[key=='x'] from:body"
+                    hx-put="/tasso-api/classify_and_reload"
+                    hx-vals='js:{"user":"{{user}}",
+                    "subject_id":"{{subject.subject_id}}",
+                    "run_id":"{{subject.run_id}}",
+                    "label_id":9, "label_text":"bad-subtraction",
+                    "comment":"",
+                    "flags":0,
+                    "time_labeled":Date.now()}'
+                    hx-ext="json-enc"
+                    hx-target="#scan_content">
+                    Bad subtraction (x)
+                </button>
 
-	    <button type="button" class="btn btn-danger"
-		    hx-trigger="click, keyup[key=='x'] from:body"
-		    hx-put="/tasso-api/classify_and_reload"
-			      hx-vals='js:{"user":"{{user}}",
-			      "subject_id":"{{subject.subject_id}}",
-			      "run_id":"{{subject.run_id}}",
-			      "label_id":9, "label_text":"bad-subtraction",
-			      "comment":"",
-			      "flags":0,
-			      "time_labeled":Date.now()}'
-		    hx-ext="json-enc"
-		    hx-target="#scan_content">
-		    Bad subtraction (x)
-	    </button>
+                <button type="button" class="btn btn-danger h-100 py-2"
+                    hx-trigger="click, keyup[key=='s'] from:body"
+                    hx-put="/tasso-api/classify_and_reload"
+                    hx-vals='js:{"user":"{{user}}",
+                    "subject_id":"{{subject.subject_id}}",
+                    "run_id":"{{subject.run_id}}",
+                    "label_id":10, "label_text":"diffraction-spike",
+                    "comment":"",
+                    "flags":0,
+                    "time_labeled":Date.now()}'
+                    hx-ext="json-enc"
+                    hx-target="#scan_content">
+                    Bright star / diffraction spike (s)
+                </button>
 
+                <button type="button" class="btn btn-danger h-100 py-2"
+                    hx-trigger="click, keyup[key=='c'] from:body"
+                    hx-put="/tasso-api/classify_and_reload"
+                    hx-vals='js:{"user":"{{user}}",
+                    "subject_id":"{{subject.subject_id}}",
+                    "run_id":"{{subject.run_id}}",
+                    "label_id":4, "label_text":"cosmic",
+                    "comment":"",
+                    "flags":0,
+                    "time_labeled":Date.now()}'
+                    hx-ext="json-enc"
+                    hx-target="#scan_content">
+                    Cosmic Ray (c)
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 
-	    <button type="button" class="btn btn-danger"
-		    hx-trigger="click, keyup[key=='s'] from:body"
-		    hx-put="/tasso-api/classify_and_reload"
-			      hx-vals='js:{"user":"{{user}}",
-			      "subject_id":"{{subject.subject_id}}",
-			      "run_id":"{{subject.run_id}}",
-			      "label_id":10, "label_text":"diffraction-spike",
-			      "comment":"",
-			      "flags":0,
-			      "time_labeled":Date.now()}'
-		    hx-ext="json-enc"
-		    hx-target="#scan_content">
-		    Bright star / diffraction spike (s)
-	    </button>
-
-	    <button type="button" class="btn btn-danger"
-		    hx-trigger="click, keyup[key=='c'] from:body"
-		    hx-put="/tasso-api/classify_and_reload"
-			      hx-vals='js:{"user":"{{user}}",
-			      "subject_id":"{{subject.subject_id}}",
-			      "run_id":"{{subject.run_id}}",
-			      "label_id":4, "label_text":"cosmic",
-			      "comment":"",
-			      "flags":0,
-			      "time_labeled":Date.now()}'
-		    hx-ext="json-enc"
-		    hx-target="#scan_content">
-		    Cosmic Ray (c)
-	    </button>
 
     </div>
 	    <div class="d-flex flex-column mt-4">
