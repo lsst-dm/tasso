@@ -40,7 +40,7 @@ class ClassificationStore(BaseStore):
     async def get_leaderboard(
         self, runs: ClassificationRun, limit: int = 50
     ) -> list:
-        """Return classification runs which are active.
+        """Return leaderboard by classification count for current run.
 
         Returns
         -------
@@ -60,4 +60,27 @@ class ClassificationStore(BaseStore):
 
         async with self._session.begin():
             result = await self._session.execute(stmt)
+            # result not validated against a model at present
         return result.all()
+
+    async def get_recent(
+        self, runs: ClassificationRun, limit: int = 50
+    ) -> list[Classification]:
+        """Return most recent classifications.
+
+        Returns
+        -------
+        list of Classifications
+        """
+        run_ids = [run.run_id for run in runs]
+
+        stmt = (
+            select(self.storage)
+            .where(SQLClassification.run_id.in_(run_ids))
+            .order_by(SQLClassification.time_labeled.desc())
+            .limit(limit)
+        )
+
+        async with self._session.begin():
+            result = await self._session.execute(stmt)
+        return [self.model.model_validate(res[0]) for res in result.all()]

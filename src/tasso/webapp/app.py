@@ -226,3 +226,39 @@ async def leaderboard(
                 "traceback": e,
             },
         )
+
+
+@webapp.get("/recent", response_class=HTMLResponse)
+async def recent(
+    request: Request,
+    user: Annotated[str, Depends(auth_dependency)],
+    session: Annotated[async_scoped_session, Depends(db_session_dependency)],
+) -> HTMLResponse:
+    """Return the recent classification page."""
+    async for db_session in db_session_dependency():
+        store = ClassificationStore(db_session)
+        run_store = ClassificationRunStore(db_session)
+
+    runs = await run_store.get_active_runs()
+    if len(runs) == 0:
+        # throw an error for now
+        raise ValueError("No currently active runs")
+
+    recent = await store.get_recent(runs)
+
+    try:
+        return templates.TemplateResponse(
+            name="pages/recent.html",
+            request=request,
+            context={
+                "recent": recent,
+            },
+        )
+    except Exception as e:
+        return templates.TemplateResponse(
+            name="pages/error.html",
+            request=request,
+            context={
+                "traceback": e,
+            },
+        )
