@@ -2,16 +2,41 @@
 {% block title %} tasso User's Guide {% endblock %}
 {% block content %}
     <div id="index_content">
-	    <div class="flex pl-3 items-center">
-		<span class="text-large font-bold">Using tasso</span>
-	    </div>
-	    <div class="flex pl-3 items-center">
+	    <div class="d-flex flex-column mt-4">
+		    <h3>Using tasso</h3>
 		    <p>The tasso main page presents a triplet of images.  Use the buttons to classify the source.  You can also use keyboard shortcuts.  After submitting your classification, a new subject will appear.
 		    </p>
+		    <h3>Classification Guide</h3>
+		    <h4>Real: Transient</h4>
+		    <p> Positive point source with no point source in the template image.</p>
+		    <p> Examples: <a href="{{url_for('get_subject',subject_id='90f353c0fcf34dff97a8628039daaf39')}}">1</a>, <a href="{{url_for('get_subject',subject_id='e5b0a7fbf2784c2aba74f3a9095d0c58')}}">2</a></p>
+		    <h4>Real: Variable</h4>
+		    <p> Positive or negative point source with corresponding point sources in the science and template image.</p>
+		    <p> Examples: <a href="{{url_for('get_subject',subject_id='389622e6ba554665b9c5e6d3227a356e')}}">1</a>, <a href="{{url_for('get_subject',subject_id='bb59a4027b2d43649867ce8a63ec9b1d')}}">2</a>, <a href="{{url_for('get_subject',subject_id='82983b0352594602b70fd26f7bd52a9b')}}">3</a></p>
+		    <h4>Real: Trailed Source</h4>
+		    <p> PSF-width extended streak; only in the science and difference image.</p>
+		    <p> Examples: <a href="{{url_for('get_subject',subject_id='8e919cb7c6224811bebdfc72846cd7d0')}}">1</a></p>
+		    <h4>Noise/no detection</h4>
+		    <p> No clear excess in the center of the difference image. </p>
+		    <p> Examples: <a href="{{url_for('get_subject',subject_id='ac46ae9e927c4d9997aa74d344a8ae6c')}}">1</a>, <a href="{{url_for('get_subject',subject_id='9c7bff60d43442bfa3ac8df5b07d1a5c')}}">2</a>, <a href="{{url_for('get_subject',subject_id='1e5077f2d0bb4b86a943602447d841a4')}}">3</a></p>
+		    <h4>Unsure/ambiguous</h4>
+		    <p> General class for cases where the labeler is unsure. </p>
+		    <h4>Dipole</h4>
+		    <p> Clear positive and negative lobes in the difference image.</p>
+		    <p> Examples: <a href="{{url_for('get_subject',subject_id='4fca66166c2646ffa308eea3973bf90a')}}">1</a>, <a href="{{url_for('get_subject',subject_id='b50eb79ed9294f159773ff2ef779ab15')}}">2</a>, <a href="{{url_for('get_subject',subject_id='0713d23f2ff94ccdaa4ffb56ee9233af')}}">3</a></p>
+		    <h4>General Bogus</h4>
+		    <p> General class for artifacts.</p>
+		    <p> Examples: <a href="{{url_for('get_subject',subject_id='9003a1413f2a48a8a58cbc079eacbccc')}}">1</a>, <a href="{{url_for('get_subject',subject_id='6f65cdde921041e594a16d6e14c6deb0')}}">2</a>, <a href="{{url_for('get_subject',subject_id='1ccbd90c84c0430ca5c096459d93a380')}}">3</a></p>
+		    <h4>Bad Subtraction</h4>
+		    <p> Image differencing problems: mixed residuals of positive and negative pixels.</p>
+		    <p> Examples: <a href="{{url_for('get_subject',subject_id='b3de8b3bd7a44459b8da99742aeac95b')}}">1</a>, <a href="{{url_for('get_subject',subject_id='9319a5ef6ef944f4bf9e4661d11eb35c')}}">2</a>, <a href="{{url_for('get_subject',subject_id='9bad4a03d75443edb85bd62a6cf99727')}}">3</a></p>
+		    <h4>Bright Star/Diffraction Spike</h4>
+		    <p> Detection on the wings or diffraction spikes of a bright star.</p>
+		    <p> Examples: <a href="{{url_for('get_subject',subject_id='0bc0dee1cbb7447b822d5f588550066f')}}">1</a>, <a href="{{url_for('get_subject',subject_id='1fcd342dafd8432a84e351362dfe98ab')}}">2</a>, <a href="{{url_for('get_subject',subject_id='59c66095b0ad4e229851844dbde55cb0')}}">3</a></p>
+		    <h4>Cosmic Ray</h4>
+		    <p> Narrow, non-PSF positive excess; seen in both difference and science image.</p>
+		    <p> Examples: <a href="{{url_for('get_subject',subject_id='904e523d6f1c4ee18bd4259ae3422a27')}}">1</a>, <a href="{{url_for('get_subject',subject_id='4f7da4e080d14f1cb383d0a1e810b8f2')}}">2</a>, <a href="{{url_for('get_subject',subject_id='90f353c0fcf34dff97a8628039daaf39')}}">3</a></p>
 	    </div>
-	    <div class="flex pl-3 items-center">
-		    <p>Eventually this page will have a visual guide to classification.
-		    </p>
 
     </div>
 {% endblock %}
