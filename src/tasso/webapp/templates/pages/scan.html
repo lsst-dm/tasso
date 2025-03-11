@@ -133,7 +133,7 @@
 
 
 	    <button type="button" class="btn btn-danger"
-		    hx-trigger="click, keyup[key=='d'] from:body"
+		    hx-trigger="click, keyup[key=='s'] from:body"
 		    hx-put="/tasso-api/classify_and_reload"
 			      hx-vals='js:{"user":"{{user}}",
 			      "subject_id":"{{subject.subject_id}}",
@@ -147,7 +147,7 @@
 		    Bright star / diffraction spike (s)
 	    </button>
 
-	    <button type="button" class="btn btn-warning"
+	    <button type="button" class="btn btn-danger"
 		    hx-trigger="click, keyup[key=='c'] from:body"
 		    hx-put="/tasso-api/classify_and_reload"
 			      hx-vals='js:{"user":"{{user}}",
