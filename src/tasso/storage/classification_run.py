@@ -5,7 +5,7 @@ from typing import Annotated
 from fastapi import Depends
 from safir.dependencies.db_session import db_session_dependency
 from sqlalchemy import select
-from sqlalchemy.ext.asyncio import async_scoped_session
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..models.classification_run import ClassificationRun
 from ..schema import ClassificationRun as SQLClassificationRun
@@ -25,9 +25,7 @@ class ClassificationRunStore(BaseStore):
 
     def __init__(
         self,
-        session: Annotated[
-            async_scoped_session, Depends(db_session_dependency)
-        ],
+        session: Annotated[AsyncSession, Depends(db_session_dependency)],
     ) -> None:
         super().__init__(
             session=session,

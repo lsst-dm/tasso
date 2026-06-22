@@ -93,6 +93,8 @@ python_files = ["tests/*.py", "tests/*/*.py"]
 # section for project-specific ignore rules.
 [tool.ruff]
 extend = "ruff-shared.toml"
+# upload_s3.py is an ad hoc operational helper exempt from linting.
+extend-exclude = ["scripts/upload_s3.py"]
 
 [tool.ruff.lint.isort]
 known-first-party = ["tasso", "tests"]

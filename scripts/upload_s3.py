@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# ruff: noqa
 
 import click
 from glob import glob
