@@ -5,7 +5,7 @@ from typing import Annotated, ClassVar
 from fastapi import Depends
 from safir.dependencies.db_session import db_session_dependency
 from sqlalchemy import delete, select, update
-from sqlalchemy.ext.asyncio import async_scoped_session
+from sqlalchemy.ext.asyncio import AsyncSession
 
 __all__ = ["BaseStore"]
 
@@ -27,9 +27,7 @@ class BaseStore:
 
     def __init__(
         self,
-        session: Annotated[
-            async_scoped_session, Depends(db_session_dependency)
-        ],
+        session: Annotated[AsyncSession, Depends(db_session_dependency)],
         model: ClassVar,  # type: ignore[misc]
         storage: ClassVar,
         primary_key: str,
@@ -91,7 +89,7 @@ class BaseStore:
         )
         async with self._session.begin():
             result = await self._session.execute(stmt)
-            return result.rowcount > 0
+            return result.rowcount > 0  # type: ignore[attr-defined]
 
     async def list(self) -> list[ClassVar]:  # type: ignore[valid-type]
         """Return a list of model records.
