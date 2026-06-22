@@ -1,0 +1,50 @@
+{% extends "pages/base.html" %}
+{% block title %} Recent Classifications {% endblock %}
+{% block content %}
+<div id="recent_content">
+
+
+
+
+
+    <div class="flex pl-3 items-center">
+
+
+		<span class="text-large text-bold">Subject</span>
+		&nbsp;
+		<span class="text-large text-bold">User </span>
+		&nbsp;
+		<span class="text-large">Classification</span>
+
+    </div>
+
+
+
+        {% for subject in recent %}
+
+
+	    <div class="flex pl-3 items-center">
+
+
+		<span class="text-large">
+			<a href="{{url_for('get_subject',subject_id=subject.subject_id)}}">
+				{{subject.subject_id}}</a></span>
+		&nbsp;
+
+		<span class="text-large">{{subject.user}}</span>
+
+		&nbsp;
+
+		<span class="text-large">{{subject.label_text}}</span>
+
+
+	    </div>
+
+
+        {% endfor %}
+
+
+
+</div>
+
+{% endblock %}

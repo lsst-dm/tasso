@@ -3,7 +3,6 @@
 from typing import Annotated
 
 from fastapi import Depends
-from safir.datetime import current_datetime
 from safir.dependencies.db_session import db_session_dependency
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import async_scoped_session
@@ -44,17 +43,8 @@ class ClassificationRunStore(BaseStore):
         -------
         list of ClassificationRun
         """
-        time_now = current_datetime()
-
         stmt = select(self.storage).where(
-            (
-                (SQLClassificationRun.time_start <= time_now)
-                | SQLClassificationRun.time_start.is_(None)
-            ),
-            (
-                (SQLClassificationRun.time_stop > time_now)
-                | SQLClassificationRun.time_stop.is_(None)
-            ),
+            SQLClassificationRun.time_stop.is_(None)
         )
 
         async with self._session.begin():

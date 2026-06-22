@@ -126,7 +126,7 @@ class BaseStore:
             else:
                 return self.model.model_validate(row[0])
 
-    async def search(self, key_value: dict[str, str]) -> ClassVar:  # type: ignore[misc]
+    async def search(self, key_value: dict) -> ClassVar:  # type: ignore[misc]
         """Get model records matching key-value pairs.
 
         Parameters

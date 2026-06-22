@@ -1,5 +1,7 @@
 """Tasso command-line interface."""
 
+from datetime import datetime
+
 import click
 import structlog
 import uvicorn
@@ -93,17 +95,115 @@ async def add_run(
     collection: str | None = None,
     namespace: str | None = None,
     ticket: str | None = None,
-    max_classifications: str | None = None,
+    max_classifications: int = 1,
 ) -> None:
     """Add a classification run."""
     await db_session_dependency.initialize(
         config.database_url, config.database_password
     )
 
-    r = ClassificationRun(name=name)  # type: ignore[call-arg]
+    r = ClassificationRun(
+        name=name,
+        comment=comment,
+        repo=repo,
+        collection=collection,
+        namespace=namespace,
+        ticket=ticket,
+        max_classifications=max_classifications,
+        time_start=datetime.utcnow(),  # noqa: DTZ003
+    )  # type: ignore[call-arg]
     async for db_session in db_session_dependency():
         store = ClassificationRunStore(db_session)
     await store.add(r)
+    await db_session_dependency.aclose()
+
+
+@main.command()
+@click.argument("run_id")
+@click.option("--name", default=None, help="Name of classification run")
+@click.option(
+    "--comment", default=None, help="Description of classification run"
+)
+@click.option(
+    "--repo", default=None, help="Base repository for subjects in this run."
+)
+@click.option(
+    "--collection", default=None, help="Collection for subjects in this run."
+)
+@click.option(
+    "--namespace",
+    default=None,
+    help="APDB namespace for subjects in this run.",
+)
+@click.option(
+    "--ticket", default=None, help="Ticket number for this classification run"
+)
+@click.option(
+    "--max_classifications",
+    default=None,
+    type=int,
+    help="Number of classifications needed per subject.",
+)
+@run_with_asyncio
+async def update_run(
+    run_id: str,
+    name: str | None,
+    comment: str | None = None,
+    repo: str | None = None,
+    collection: str | None = None,
+    namespace: str | None = None,
+    ticket: str | None = None,
+    max_classifications: int | None = None,
+) -> None:
+    """Update a classification run."""
+    await db_session_dependency.initialize(
+        config.database_url, config.database_password
+    )
+
+    async for db_session in db_session_dependency():
+        store = ClassificationRunStore(db_session)
+
+    run = await store.get(run_id)
+
+    properties = [
+        "name",
+        "comment",
+        "repo",
+        "collection",
+        "namespace",
+        "ticket",
+        "max_classifications",
+    ]
+
+    for k in properties:
+        v = eval(k)  # noqa: S307
+        if v is not None:
+            setattr(run, k, v)
+
+    print(run)
+
+    await store.update(run)
+    await db_session_dependency.aclose()
+
+
+@main.command()
+@click.argument("run_id")
+@run_with_asyncio
+async def end_run(run_id: str) -> None:
+    """Set the stop time of a classification run to now.
+
+    The web app will no longer display subjects from the run.
+    """
+    await db_session_dependency.initialize(
+        config.database_url, config.database_password
+    )
+
+    # don't need exact record to delete
+    async for db_session in db_session_dependency():
+        store = ClassificationRunStore(db_session)
+    run = await store.get(run_id)
+    run.time_stop = datetime.utcnow()  # noqa: DTZ003
+    await store.update(run)
     await db_session_dependency.aclose()
 
 
@@ -126,7 +226,14 @@ async def delete_run(run_id: str) -> None:
 
 @main.command()
 @run_with_asyncio
-async def list_runs() -> None:
+@click.option(
+    "--active",
+    is_flag=True,
+    default=False,
+    show_default=True,
+    help="Show only active runs.",
+)
+async def list_runs(*, active: bool = False) -> None:
     """Get runs."""
     await db_session_dependency.initialize(
         config.database_url, config.database_password
@@ -134,7 +241,12 @@ async def list_runs() -> None:
 
     async for db_session in db_session_dependency():
         store = ClassificationRunStore(db_session)
-        print(await store.list())
+        if active:
+            runs = await store.get_active_runs()
+        else:
+            runs = await store.list()
+        for run in runs:
+            print(run)
     await db_session_dependency.aclose()
 
 
@@ -159,7 +271,14 @@ async def add_subject(
     )  # type: ignore[call-arg]
     async for db_session in db_session_dependency():
         store = SubjectStore(db_session)
-    await store.add(s)
+    prior_subject = await store.search(
+        # using uri rather than dia_source_id because of type issues.
+        # note that this query could become inefficient as the db gets
+        # lots of subjects in it
+        {"uri": uri, "run_id": run_id}
+    )
+    if len(prior_subject) == 0:
+        await store.add(s)
     await db_session_dependency.aclose()
 
 

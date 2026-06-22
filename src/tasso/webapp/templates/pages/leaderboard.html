@@ -1,0 +1,45 @@
+{% extends "pages/base.html" %}
+{% block title %} Leaderboard {% endblock %}
+{% block content %}
+<div id="leaderboard_content">
+
+
+
+
+
+    <div class="flex pl-3 items-center">
+
+
+		<span class="text-large text-bold">User </span>
+		&nbsp;
+		<span class="text-large">Classification Count</span>
+
+    </div>
+
+
+
+        {% for leader in leaders %}
+
+
+	    <div class="flex pl-3 items-center">
+
+
+		<span class="text-large">{{leader.user}}</span>
+
+
+		&nbsp;
+
+
+		<span class="text-large">{{leader.count}}</span>
+
+
+	    </div>
+
+
+        {% endfor %}
+
+
+
+</div>
+
+{% endblock %}

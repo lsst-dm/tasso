@@ -17,6 +17,7 @@ from safir.dependencies.http_client import http_client_dependency
 from sqlalchemy.ext.asyncio import async_scoped_session
 
 from tasso.config import config
+from tasso.storage.classification import ClassificationStore
 from tasso.storage.classification_run import ClassificationRunStore
 from tasso.storage.subject import SubjectStore
 
@@ -179,6 +180,78 @@ async def guide(
             request=request,
             context={
                 "user": user,
+            },
+        )
+    except Exception as e:
+        return templates.TemplateResponse(
+            name="pages/error.html",
+            request=request,
+            context={
+                "traceback": e,
+            },
+        )
+
+
+@webapp.get("/leaderboard", response_class=HTMLResponse)
+async def leaderboard(
+    request: Request,
+    user: Annotated[str, Depends(auth_dependency)],
+    session: Annotated[async_scoped_session, Depends(db_session_dependency)],
+) -> HTMLResponse:
+    """Return the leaderboard page."""
+    async for db_session in db_session_dependency():
+        store = ClassificationStore(db_session)
+        run_store = ClassificationRunStore(db_session)
+
+    runs = await run_store.get_active_runs()
+    if len(runs) == 0:
+        # throw an error for now
+        raise ValueError("No currently active runs")
+
+    leaders = await store.get_leaderboard(runs)
+
+    try:
+        return templates.TemplateResponse(
+            name="pages/leaderboard.html",
+            request=request,
+            context={
+                "leaders": leaders,
+            },
+        )
+    except Exception as e:
+        return templates.TemplateResponse(
+            name="pages/error.html",
+            request=request,
+            context={
+                "traceback": e,
+            },
+        )
+
+
+@webapp.get("/recent", response_class=HTMLResponse)
+async def recent(
+    request: Request,
+    user: Annotated[str, Depends(auth_dependency)],
+    session: Annotated[async_scoped_session, Depends(db_session_dependency)],
+) -> HTMLResponse:
+    """Return the recent classification page."""
+    async for db_session in db_session_dependency():
+        store = ClassificationStore(db_session)
+        run_store = ClassificationRunStore(db_session)
+
+    runs = await run_store.get_active_runs()
+    if len(runs) == 0:
+        # throw an error for now
+        raise ValueError("No currently active runs")
+
+    recent = await store.get_recent(runs)
+
+    try:
+        return templates.TemplateResponse(
+            name="pages/recent.html",
+            request=request,
+            context={
+                "recent": recent,
             },
         )
     except Exception as e:
